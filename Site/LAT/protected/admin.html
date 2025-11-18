@@ -1,0 +1,350 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LeanAmp Admin Console</title>
+    <meta name="description" content="Secure admin console to manage LeanAmp user access.">
+    <link rel="icon" href="https://leanamp.com/Image%20(17).jpg" type="image/jpeg">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="../theme/site-theme.css">
+    <style>
+        .admin-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 1.75rem;
+            margin-top: 1.75rem;
+        }
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 1rem;
+            margin: 1.5rem auto 0;
+        }
+        .stat-card {
+            border-radius: 20px;
+            padding: 1.25rem;
+            background: linear-gradient(135deg, rgba(255,255,255,0.9), rgba(224,241,255,0.9));
+            border: 1px solid rgba(255,255,255,0.7);
+            box-shadow: 0 20px 50px rgba(15,23,42,0.12);
+        }
+        .stat-card span {
+            font-size: 0.78rem;
+            text-transform: uppercase;
+            letter-spacing: 0.12em;
+            color: var(--text-light);
+        }
+        .stat-card strong {
+            display: block;
+            font-size: 1.8rem;
+            color: var(--primary-green);
+            margin-top: 0.35rem;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        thead {
+            background: rgba(0,100,0,0.08);
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            font-size: 0.85rem;
+        }
+        th, td {
+            text-align: left;
+            padding: 0.65rem;
+            border-bottom: 1px solid #e2e8f0;
+        }
+        .mini-label {
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            color: var(--text-light);
+        }
+        .status-message { margin-top: 1rem; font-weight: 600; }
+        .role-select {
+            border-radius: 999px;
+            border: 1px solid rgba(0,100,0,0.25);
+            padding: 0.35rem 0.65rem;
+            font-size: 0.85rem;
+            background: #f8fbff;
+        }
+        .table-actions {
+            display: flex;
+            gap: 0.35rem;
+            align-items: center;
+        }
+        .table-actions .action-btn {
+            padding: 0.35rem 0.9rem;
+            font-size: 0.8rem;
+            margin: 0;
+        }
+    </style>
+</head>
+<body>
+    <nav>
+        <a href="../sitepages/Index.html">Home</a>
+        <a href="../sitepages/SolutionsPage.html">Solutions</a>
+        <a href="../sitepages/MarketsPage.html">Markets</a>
+        <a href="../sitepages/CaseStudy.html">Case Study</a>
+        <a href="../sitepages/ContactPage.html">Contact</a>
+        <a href="admin.html">Admin</a>
+        <a href="crm-dashboard.html">CRM Dashboard</a>
+        <a href="../sitepages/login.html" class="nav-auth-link" data-auth-href="calcandquote.html" data-auth-label="Quote Calculator">Login</a>
+        <a href="../sitepages/calcomwopdf.html">Savings Calculator</a>
+        <button class="action-btn ghost nav-logout" type="button" data-login="../sitepages/login.html">
+            <i class="fas fa-sign-out-alt"></i> Logout
+        </button>
+    </nav>
+
+    <section class="content-section" style="min-height:100vh;">
+        <div class="floating-shell" style="max-width:1100px;">
+            <div class="hero-content" style="color:var(--text-dark);">
+                <p class="eyebrow">Secure Console</p>
+                <h2>Admin Control Center</h2>
+                <p>Manage Sales Intelligence Hub access with clear oversight of every user and role.</p>
+
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <span>Total Users</span>
+                        <strong id="totalUsersValue">0</strong>
+                    </div>
+                    <div class="stat-card">
+                        <span>Admins</span>
+                        <strong id="adminCountValue">0</strong>
+                    </div>
+                    <div class="stat-card">
+                        <span>Last Update</span>
+                        <strong id="lastUpdatedValue">—</strong>
+                    </div>
+                </div>
+
+                <div class="admin-grid">
+                    <div class="panel-card">
+                        <h3>Add New User</h3>
+                        <form id="addUserForm">
+                            <label class="mini-label" for="newEmail">Email</label>
+                            <input type="email" id="newEmail" placeholder="user@example.com" required>
+                            <label class="mini-label" for="newPassword">Password</label>
+                            <input type="text" id="newPassword" placeholder="TempPassword123" required>
+                            <label class="mini-label" for="newRole">Role</label>
+                            <select id="newRole">
+                                <option value="user">User</option>
+                                <option value="admin">Admin</option>
+                            </select>
+                            <button class="action-btn" type="submit" style="margin:0;width:100%;">Add User</button>
+                            <div id="adminStatus" class="status-message"></div>
+                        </form>
+                    </div>
+                    <div class="panel-card" style="overflow:auto;">
+                        <h3>Existing Users</h3>
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Email</th>
+                                    <th>Role</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="usersTableBody"></tbody>
+                        </table>
+                        <p class="mini-label" style="margin-top:0.75rem;">Default admin account cannot be removed.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <script>
+        const AUTH_TOKEN_KEY = 'leanampAuthToken';
+        const unauthorizedPage = '../errorpages/410.html';
+
+        function varPrimary() {
+            return getComputedStyle(document.documentElement).getPropertyValue('--primary-green') || '#006400';
+        }
+
+        function logoutAndRedirect() {
+            localStorage.removeItem(AUTH_TOKEN_KEY);
+            localStorage.removeItem('leanampCurrentUser');
+            localStorage.removeItem('leanampCurrentUserRole');
+            window.location.replace(unauthorizedPage);
+        }
+
+        async function apiFetch(path, options = {}) {
+            const token = localStorage.getItem(AUTH_TOKEN_KEY);
+            if (!token) {
+                logoutAndRedirect();
+                return Promise.reject(new Error('Unauthorized'));
+            }
+            const baseHeaders = options.body ? { 'Content-Type': 'application/json' } : {};
+            const response = await fetch(path, {
+                ...options,
+                headers: {
+                    ...baseHeaders,
+                    ...(options.headers || {}),
+                    'Authorization': `Bearer ${token}`
+                }
+            });
+            if (response.status === 401 || response.status === 403) {
+                logoutAndRedirect();
+                return Promise.reject(new Error('Unauthorized'));
+            }
+            if (!response.ok) {
+                const message = await response.text();
+                throw new Error(message || `Request failed (${response.status})`);
+            }
+            if (response.status === 204) return null;
+            return response.json();
+        }
+
+        async function ensureAdminAccess() {
+            const me = await apiFetch('/api/auth/me');
+            if (me?.user?.role !== 'admin') {
+                logoutAndRedirect();
+                throw new Error('Admin role required');
+            }
+        }
+
+        async function fetchUsers() {
+            return apiFetch('/api/users');
+        }
+
+        async function addUser(payload) {
+            return apiFetch('/api/users', {
+                method: 'POST',
+                body: JSON.stringify(payload)
+            });
+        }
+
+        async function updateUser(id, updates) {
+            return apiFetch(`/api/users/${id}`, {
+                method: 'PATCH',
+                body: JSON.stringify(updates)
+            });
+        }
+
+        async function deleteUser(id) {
+            return apiFetch(`/api/users/${id}`, { method: 'DELETE' });
+        }
+
+        function renderUsers(users) {
+            const tbody = document.getElementById('usersTableBody');
+            tbody.innerHTML = users.map(user => {
+                const roleSelect = `
+                    <select class="role-select" data-id="${user.id}">
+                        <option value="user" ${user.role === 'user' ? 'selected' : ''}>User</option>
+                        <option value="admin" ${user.role === 'admin' ? 'selected' : ''}>Admin</option>
+                    </select>
+                `;
+                return `
+                    <tr>
+                        <td>${user.email}</td>
+                        <td>${roleSelect}</td>
+                        <td>
+                            <div class="table-actions">
+                                <button type="button" class="action-btn" data-remove="${user.id}">Remove</button>
+                            </div>
+                        </td>
+                    </tr>
+                `;
+            }).join('');
+        }
+
+        function updateStats(users) {
+            const admins = users.filter(u => u.role === 'admin').length;
+            document.getElementById('totalUsersValue').textContent = users.length;
+            document.getElementById('adminCountValue').textContent = admins;
+            document.getElementById('lastUpdatedValue').textContent = new Date().toLocaleString();
+        }
+
+        async function refreshAdminUI(statusBox) {
+            try {
+                const users = await fetchUsers();
+                renderUsers(users);
+                updateStats(users);
+                const message = `Loaded ${users.length} user${users.length === 1 ? '' : 's'}.`;
+                if (statusBox) {
+                    statusBox.textContent = message;
+                    statusBox.style.color = varPrimary();
+                }
+            } catch (err) {
+                if (statusBox) {
+                    statusBox.textContent = err.message;
+                    statusBox.style.color = '#c00';
+                }
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', async () => {
+            const form = document.getElementById('addUserForm');
+            const statusBox = document.getElementById('adminStatus');
+            const tableBody = document.getElementById('usersTableBody');
+
+            try {
+                await ensureAdminAccess();
+            } catch {
+                return;
+            }
+
+            refreshAdminUI(statusBox);
+
+            form.addEventListener('submit', async (event) => {
+                event.preventDefault();
+                const payload = {
+                    email: document.getElementById('newEmail').value.trim(),
+                    password: document.getElementById('newPassword').value.trim(),
+                    role: document.getElementById('newRole').value
+                };
+
+                if (!payload.email || !payload.password) {
+                    statusBox.textContent = 'Provide both email and password.';
+                    statusBox.style.color = '#c00';
+                    return;
+                }
+
+                try {
+                    statusBox.textContent = 'Saving...';
+                    statusBox.style.color = varPrimary();
+                    await addUser(payload);
+                    form.reset();
+                    await refreshAdminUI(statusBox);
+                } catch (err) {
+                    statusBox.textContent = err.message;
+                    statusBox.style.color = '#c00';
+                }
+            });
+
+            tableBody.addEventListener('change', async (event) => {
+                if (!event.target.matches('.role-select')) return;
+                const id = event.target.getAttribute('data-id');
+                const newRole = event.target.value;
+                try {
+                    await updateUser(id, { role: newRole });
+                    statusBox.textContent = `Updated role to ${newRole}.`;
+                    statusBox.style.color = varPrimary();
+                } catch (err) {
+                    statusBox.textContent = err.message;
+                    statusBox.style.color = '#c00';
+                }
+            });
+
+            tableBody.addEventListener('click', async (event) => {
+                const button = event.target.closest('[data-remove]');
+                if (!button) return;
+                const id = button.getAttribute('data-remove');
+                try {
+                    await deleteUser(id);
+                    statusBox.textContent = 'User removed.';
+                    statusBox.style.color = varPrimary();
+                    await refreshAdminUI(statusBox);
+                } catch (err) {
+                    statusBox.textContent = err.message;
+                    statusBox.style.color = '#c00';
+                }
+            });
+        });
+    </script>
+    <script src="../assets/site.js"></script>
+</body>
+</html>

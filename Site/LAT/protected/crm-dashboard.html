@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CRM Dashboard | LeanAmp Technologies</title>
+    <meta name="description" content="Protected CRM dashboard summarizing LeanAmp customer relationships, pipeline, and next actions.">
+    <link rel="icon" href="https://leanamp.com/Image%20(17).jpg" type="image/jpeg">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="../assets/crm.js"></script>
+    <script>
+        (async function enforceLogin() {
+            const unauthorizedPage = '../errorpages/410.html';
+            const token = localStorage.getItem('leanampAuthToken');
+            if (!token) {
+                window.location.replace(unauthorizedPage);
+                return;
+            }
+            try {
+                const res = await fetch('/api/auth/me', {
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+                if (!res.ok) throw new Error('Unauthorized');
+            } catch (err) {
+                console.error('Auth enforcement failed', err);
+                localStorage.removeItem('leanampAuthToken');
+                localStorage.removeItem('leanampCurrentUser');
+                localStorage.removeItem('leanampCurrentUserRole');
+                window.location.replace(unauthorizedPage);
+            }
+        })();
+    </script>
+    <link rel="stylesheet" href="../theme/site-theme.css">
+</head>
+<body>
+    <nav>
+        <a href="../sitepages/Index.html">Home</a>
+        <a href="../sitepages/SolutionsPage.html">Solutions</a>
+        <a href="../sitepages/MarketsPage.html">Markets</a>
+        <a href="../sitepages/CaseStudy.html">Case Study</a>
+        <a href="../sitepages/ContactPage.html">Contact</a>
+        <a href="admin.html">Admin</a>
+        <a href="crm-dashboard.html">CRM Dashboard</a>
+        <a href="../sitepages/login.html" class="nav-auth-link" data-auth-href="calcandquote.html" data-auth-label="Quote Calculator">Login</a>
+        <a href="../sitepages/calcomwopdf.html">Savings Calculator</a>
+        <button class="action-btn ghost nav-logout" type="button" data-login="../sitepages/login.html">
+            <i class="fas fa-sign-out-alt"></i> Logout
+        </button>
+    </nav>
+
+    <section class="calc-section">
+        <div style="max-width:1200px;margin:0 auto;width:100%;display:flex;flex-direction:column;align-items:center;z-index:1">
+            <a class="logo" href="../sitepages/Index.html" aria-label="LeanAmp Home">
+                <img src="../assets/logo.png?v=1" alt="LeanAmp Logo" style="width:100%;height:100%;object-fit:contain;border-radius:50%;">
+            </a>
+            <h2 style="font-size:2.25rem;margin-bottom:1.5rem;animation:fadeInUp 0.8s ease-out;width:100%;color:var(--white);text-shadow:0 2px 4px rgba(0,0,0,0.3);">
+                Customer Intelligence & CRM Dashboard
+            </h2>
+            <p style="font-size:1.2rem;margin-bottom:2rem;max-width:820px;color:#fff;text-shadow:0 1px 2px rgba(0,0,0,0.35);">
+                Monitor every prospect, weighted pipeline value, and follow-up queue—even when you’re away from the quote calculator.
+            </p>
+            <div class="container">
+                <div class="section-heading">
+                    <p class="eyebrow">Pipeline Pulse</p>
+                    <h2>Key Metrics at a Glance</h2>
+                </div>
+                <div class="metrics-grid crm-metrics">
+                    <div class="mini-stat"><span>Active Deals</span><strong id="crmDashActive">0</strong></div>
+                    <div class="mini-stat"><span>Pipeline Value</span><strong id="crmDashPipeline">$0</strong></div>
+                    <div class="mini-stat"><span>Weighted Forecast</span><strong id="crmDashWeighted">$0</strong></div>
+                    <div class="mini-stat"><span>Next Touches (7d)</span><strong id="crmDashTouches">0</strong></div>
+                    <div class="mini-stat"><span>Closed Won</span><strong id="crmDashWon">0</strong></div>
+                    <div class="mini-stat"><span>Closed Lost</span><strong id="crmDashLost">0</strong></div>
+                </div>
+
+                <div class="row" style="margin-top:1.5rem;">
+                    <div class="col-5">
+                        <div class="panel-card">
+                            <div class="panel-header">
+                                <div>
+                                    <p class="eyebrow">Stage Mix</p>
+                                    <h3>Pipeline Distribution</h3>
+                                </div>
+                                <div class="badge-pill"><i class="fas fa-signal"></i> Live Sync</div>
+                            </div>
+                            <div class="chart-shell">
+                                <canvas id="crmDashboardChart" height="220" aria-label="Stage distribution"></canvas>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-7">
+                        <div class="panel-card">
+                            <div class="panel-header">
+                                <div>
+                                    <p class="eyebrow">Upcoming Actions</p>
+                                    <h3>Follow-Up Queue</h3>
+                                </div>
+                                <div class="badge-pill"><i class="fas fa-calendar-check"></i> Next 30 Days</div>
+                            </div>
+                            <div id="crmDashboardNextSteps" class="next-steps-list"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="panel-card" style="margin-top:1.5rem;">
+                    <div class="panel-header">
+                        <div>
+                            <p class="eyebrow">Customer Records</p>
+                            <h3>Full Relationship Log</h3>
+                        </div>
+                        <div class="badge-pill"><i class="fas fa-database"></i> Auto-Saved</div>
+                    </div>
+                    <div id="crmDashboardList" class="crm-list"></div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <footer>
+        <p>&copy; 2025 LeanAmp Technologies, Inc. | <a href="mailto:info@leanamp.com">info@leanamp.com</a></p>
+    </footer>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            if (window.LeanAmpCRM) {
+                window.LeanAmpCRM.initDashboard({
+                    listId: "crmDashboardList",
+                    chartId: "crmDashboardChart",
+                    nextStepsId: "crmDashboardNextSteps",
+                    loadBasePath: "calcandquote.html",
+                    metrics: {
+                        activeId: "crmDashActive",
+                        pipelineId: "crmDashPipeline",
+                        weightedId: "crmDashWeighted",
+                        nextTouchesId: "crmDashTouches",
+                        wonId: "crmDashWon",
+                        lostId: "crmDashLost"
+                    }
+                });
+            }
+        });
+    </script>
+    <script src="../assets/site.js"></script>
+</body>
+</html>

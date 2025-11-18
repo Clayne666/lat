@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LeanAmp Login</title>
+    <link rel="icon" href="https://leanamp.com/Image%20(17).jpg" type="image/jpeg">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="../theme/site-theme.css">
+    <style>
+        .login-wrapper {
+            max-width: 420px;
+            margin: 0 auto;
+        }
+        .login-wrapper input[type="email"],
+        .login-wrapper input[type="password"] {
+            width: 100%;
+            padding: 0.75rem;
+            border-radius: 10px;
+            border: 1px solid #dfe3ea;
+            margin-bottom: 1rem;
+            font-family: 'Inter', sans-serif;
+            background: #fff;
+            color: var(--text-dark);
+        }
+        .login-wrapper input::placeholder {
+            color: #9aa4b2;
+        }
+        .hero-content { position: relative; z-index: 1; }
+    </style>
+</head>
+<body>
+                    <nav>
+        <a href="Index.html">Home</a>
+        <a href="SolutionsPage.html">Solutions</a>
+        <a href="MarketsPage.html">Markets</a>
+        <a href="CaseStudy.html">Case Study</a>
+        <a href="ContactPage.html">Contact</a>
+        <a href="login.html" class="nav-auth-link" data-auth-href="../protected/calcandquote.html" data-auth-label="Quote Calculator">Login</a>
+        <a href="calcomwopdf.html">Savings Calculator</a>
+        <button class="action-btn ghost nav-logout" type="button" data-login="login.html">
+            <i class="fas fa-sign-out-alt"></i> Logout
+        </button>
+    </nav>
+
+
+
+
+
+    <section class="content-section" style="min-height:100vh;">
+        <div class="floating-shell">
+            <a class="logo" href="Index.html" aria-label="LeanAmp Home">
+                <img src="../assets/logo.png?v=1" alt="LeanAmp Logo" style="width:100%;height:100%;object-fit:contain;border-radius:50%;">
+            </a>
+            <p class="eyebrow">Internal Access</p>
+            <h2>Sign in to the Sales Intelligence Hub</h2>
+            <div class="login-wrapper">
+                <div class="panel-card">
+                    <form id="loginForm" autocomplete="on">
+                        <label for="email">Email</label>
+                        <input id="email" name="username" type="email" placeholder="you@leanamp.com" autocomplete="username" required>
+                        <label for="password">Password</label>
+                        <input id="password" name="password" type="password" placeholder="••••••" autocomplete="current-password" required>
+                        <button class="action-btn" type="submit" style="width:100%;margin:0;">Sign In</button>
+                        <div id="loginError" class="error-message" style="display:none;margin-top:1rem;"></div>
+                    </form>
+                </div>
+                <p style="color:#fff;margin-top:1rem;">Need access? Email <a href="mailto:sales@leanamp.com" style="color:#fff;text-decoration:underline;">sales@leanamp.com</a>.</p>
+            </div>
+        </div>
+    </section>
+
+    <script>
+        const AUTH_TOKEN_KEY = 'leanampAuthToken';
+        const AUTH_USER_KEY = 'leanampCurrentUser';
+        const AUTH_ROLE_KEY = 'leanampCurrentUserRole';
+
+        function redirectAuthenticatedUser() {
+            const redirectTarget = new URLSearchParams(window.location.search).get('redirect') || '../protected/calcandquote.html';
+            window.location.replace(redirectTarget);
+        }
+
+        function clearSession() {
+            localStorage.removeItem(AUTH_TOKEN_KEY);
+            localStorage.removeItem(AUTH_USER_KEY);
+            localStorage.removeItem(AUTH_ROLE_KEY);
+        }
+
+        async function verifySession() {
+            const token = localStorage.getItem(AUTH_TOKEN_KEY);
+            if (!token) return false;
+            try {
+                const res = await fetch('/api/auth/me', {
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+                if (!res.ok) throw new Error('Invalid session');
+                const data = await res.json();
+                if (data?.user?.sub) {
+                    return true;
+                }
+            } catch (err) {
+                clearSession();
+            }
+            return false;
+        }
+
+        document.addEventListener('DOMContentLoaded', async () => {
+            const form = document.getElementById('loginForm');
+            const errorBox = document.getElementById('loginError');
+
+            if (await verifySession()) {
+                redirectAuthenticatedUser();
+                return;
+            }
+
+            form.addEventListener('submit', async (e) => {
+                e.preventDefault();
+                const email = document.getElementById('email').value.trim();
+                const password = document.getElementById('password').value;
+
+                try {
+                    const res = await fetch('/api/auth/login', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ email, password })
+                    });
+                    if (!res.ok) {
+                        throw new Error('Invalid credentials');
+                    }
+                    const data = await res.json();
+                    localStorage.setItem(AUTH_TOKEN_KEY, data.token);
+                    localStorage.setItem(AUTH_USER_KEY, data.user?.email || email);
+                    localStorage.setItem(AUTH_ROLE_KEY, data.user?.role || 'user');
+                    if (errorBox) errorBox.style.display = 'none';
+                    redirectAuthenticatedUser();
+                } catch (err) {
+                    if (errorBox) {
+                        errorBox.textContent = 'Incorrect email or password. Please try again or contact an administrator.';
+                        errorBox.style.display = 'block';
+                    }
+                }
+            });
+        });
+    </script>
+    <script src="../assets/site.js"></script>
+</body>
+</html>

@@ -1,0 +1,2044 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Energy & AC Optimization Calculator | LeanAmp Technologies</title>
+    <meta name="description" content="Calculate your energy & AC savings with LeanAmp's AI optimization and instant proposal generator.">
+    <link rel="icon" href="https://leanamp.com/Image%20(17).jpg" type="image/jpeg">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script>
+        // Google Maps callback - this ensures API is ready before use
+        function initGoogleMaps() {
+            console.log('✅ Google Maps API loaded successfully');
+            if (window.googleMapsReady) {
+                window.googleMapsReady();
+            }
+        }
+    </script>
+    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDTfLuTCzrL7IrO8S0LjvZ4V9B_Zug7LIY&libraries=places&callback=initGoogleMaps" async defer></script>
+   
+    <link rel="stylesheet" href="../theme/site-theme.css">
+</head>
+<body>
+                        <nav>
+        <a href="Index.html">Home</a>
+        <a href="SolutionsPage.html">Solutions</a>
+        <a href="MarketsPage.html">Markets</a>
+        <a href="CaseStudy.html">Case Study</a>
+        <a href="ContactPage.html">Contact</a>
+        <a href="login.html" class="nav-auth-link" data-auth-href="../protected/calcandquote.html" data-auth-label="Quote Calculator">Login</a>
+        <a href="calcomwopdf.html">Savings Calculator</a>
+        <button class="action-btn ghost nav-logout" type="button" data-login="login.html">
+            <i class="fas fa-sign-out-alt"></i> Logout
+        </button>
+    </nav>
+
+
+
+
+
+   
+    <section class="calc-section">
+        <div style="max-width:1200px;margin:0 auto;width:100%;display:flex;flex-direction:column;align-items:center;z-index:1">
+            <a class="logo" href="Index.html" aria-label="LeanAmp Home">
+                <img id="companyLogo" src="../assets/logo.png?v=1" alt="LeanAmp Logo"
+                     style="width: 100%; height: 100%; object-fit: contain; border-radius: 50%;"
+                     crossorigin="anonymous"
+                     onerror="this.style.display='none'; this.parentElement.innerHTML='<i class=\'fas fa-bolt\' style=\'font-size: 40px; color: var(--primary-green);\'></i>'">
+            </a>
+           
+            <h2 style="font-size:2.25rem;margin-bottom:1.5rem;animation:fadeInUp 0.8s ease-out;width:100%;color:var(--white);text-shadow:0 2px 4px rgba(0,0,0,0.3)">
+                Energy & AC Optimization Calculator
+            </h2>
+            <p style="font-size:1.25rem;margin-bottom:2rem;animation:fadeInUp 0.8s ease-out 0.2s both;width:100%;max-width:800px;color:var(--white);text-shadow:0 1px 2px rgba(0,0,0,0.3)">
+                Model instant savings scenarios with our performance guarantee.
+            </p>
+           
+            <div class="container">
+                <!-- PROJECT & CUSTOMER DETAILS -->
+                <div class="row">
+                    <div class="col-12">
+                        <div class="customer-card">
+                            <div class="details-header">
+                                <div>
+                                    <p class="eyebrow">Project Intake</p>
+                                    <h3>Project & Customer Details</h3>
+                                    <p>These fields sync directly with the sales intelligence hub.</p>
+                                </div>
+                                <div class="badge-pill"><i class="fas fa-sync"></i> Live Auto-Update</div>
+                            </div>
+                            <div class="detail-grid">
+                                <label class="detail-field">
+                                    <span>Project Name</span>
+                                    <input type="text" id="projectName" placeholder="e.g. Facility Retrofit 2025" value="Optimization Project">
+                                </label>
+                                <label class="detail-field">
+                                    <span>Customer Name</span>
+                                    <input type="text" id="customerName" placeholder="e.g. Acme Industries">
+                                </label>
+                                <label class="detail-field">
+                                    <span>Address / Facility</span>
+                                    <input type="text" id="customerAddress" placeholder="Auto-filled from ZIP if blank">
+                                </label>
+                                <label class="detail-field">
+                                    <span>Primary Contact</span>
+                                    <input type="text" id="customerContact" placeholder="e.g. John Doe">
+                                </label>
+                            </div>
+                            <div class="detail-meta">
+                                <div>
+                                    <small>Next Step</small>
+                                    <strong>Auto-fill ZIP to enrich rate & climate data</strong>
+                                </div>
+                                <div>
+                                    <small>Status</small>
+                                    <strong><i class="fas fa-check-circle"></i> Ready to calculate</strong>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+               
+                <!-- LOCATION + RATE / DEGREE DAYS -->
+                <div class="row input-panels">
+                    <div class="col-7">
+                        <div class="panel-card location-panel">
+                            <div class="panel-header">
+                                <div>
+                                    <p class="eyebrow">Location Intelligence</p>
+                                    <h3>Address & Auto-Fill</h3>
+                                    <p>Pull real utility rates & climate data with one lookup.</p>
+                                </div>
+                                <div class="badge-pill"><i class="fas fa-map-marker-alt"></i> Geo Synced</div>
+                            </div>
+                            <label class="control-field">
+                                <span class="field-label">Enter ZIP Code or Street Address</span>
+                                <input type="text" id="zipOrAddress" placeholder="Start typing: 123 Main St, Denver, CO... or enter: 80202">
+                                <div id="addressSuggestions" class="address-suggestions" aria-live="polite"></div>
+                            </label>
+                            <div class="location-actions">
+                                <button class="action-btn autofill-btn" id="lookupBtn">
+                                    <i class="fas fa-search-location"></i> Auto-Fill Location & Rates
+                                </button>
+                                <button class="action-btn autofill-btn" id="myLocationBtn" type="button">
+                                    <i class="fas fa-location-arrow"></i> Use My Location
+                                </button>
+                                <div id="lookupStatus" class="status-message">
+                                    <strong>Tip:</strong> Start typing for autocomplete suggestions, OR enter ZIP and click "Auto-Fill".
+                                </div>
+                                <div id="lookupError" class="error-message" style="display:none;"></div>
+                            </div>
+                            <div class="location-meta">
+                                <div>
+                                    <small>Detected Location</small>
+                                    <strong><span id="detectedLocation">Average US (Rate: $0.17/kWh)</span></strong>
+                                </div>
+                                <div>
+                                    <small>Auto-Filled from APIs</small>
+                                    <div class="pill-row">
+                                        <span class="pill"><i class="fas fa-bolt"></i> Rate: $<span id="apiRateDisplay">0.17</span> /kWh</span>
+                                        <span class="pill"><i class="fas fa-thermometer-half"></i> CDD: <span id="apiCddDisplay">1500</span></span>
+                                        <span class="pill"><i class="fas fa-temperature-low"></i> HDD: <span id="apiHddDisplay">5000</span></span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                   
+                    <div class="col-5">
+                        <div class="panel-card controls-panel">
+                            <div class="panel-header">
+                                <div>
+                                    <p class="eyebrow">Operating Profile</p>
+                                    <h3>Rate & Runtime Inputs</h3>
+                                </div>
+                                <div class="badge-pill"><i class="fas fa-bolt"></i> Live Sync</div>
+                            </div>
+                            <div class="control-grid">
+                                <label class="control-field slider-field">
+                                    <span class="field-label"><i class="fas fa-bolt"></i> Electric Rate ($/kWh)</span>
+                                    <div class="field-value">$<span id="rateDisplay">0.17</span></div>
+                                    <input id="rateSlider" type="range" min="0.02" max="0.6" step="0.01" value="0.17" aria-label="Electric Rate Slider">
+                                </label>
+                                <label class="control-field slider-field">
+                                    <span class="field-label"><i class="fas fa-calendar-day"></i> Days of Operation / Week</span>
+                                    <div class="field-value"><span id="daysDisplay">7</span> days</div>
+                                    <input id="daysSlider" type="range" min="1" max="7" step="1" value="7" aria-label="Days Slider">
+                                </label>
+                                <label class="control-field">
+                                    <span class="field-label"><i class="fas fa-building"></i> Customer Type</span>
+                                    <select id="rateType" aria-label="Customer Type">
+                                        <option value="res">Residential</option>
+                                        <option value="comm" selected>Commercial</option>
+                                    </select>
+                                </label>
+                            </div>
+                            <div class="advanced-panel">
+                                <div class="advanced-toggle-row">
+                                    <label><input type="checkbox" id="advancedToggle"> Advanced Climate Options</label>
+                                    <span>Dial in manual CDD/HDD</span>
+                                </div>
+                                <label class="control-field slider-field hidden" id="cddGroup">
+                                    <span class="field-label"><i class="fas fa-thermometer-half"></i> CDD (Cooling Degree Days)</span>
+                                    <div class="field-value"><span id="cddDisplay">1500</span></div>
+                                    <input id="cddSlider" type="range" min="300" max="5000" step="50" value="1500">
+                                </label>
+                                <label class="control-field slider-field hidden" id="hddGroup">
+                                    <span class="field-label"><i class="fas fa-thermometer-full"></i> HDD (Heating Degree Days)</span>
+                                    <div class="field-value"><span id="hddDisplay">5000</span></div>
+                                    <input id="hddSlider" type="range" min="0" max="10000" step="100" value="5000">
+                                </label>
+                                <label class="control-field slider-field hidden" id="indoorTempGroup">
+                                    <span class="field-label"><i class="fas fa-thermometer-empty"></i> Indoor Temp (°F)</span>
+                                    <div class="field-value"><span id="indoorTempDisplay">75</span>°F</div>
+                                    <input id="indoorTempSlider" type="range" min="68" max="80" step="1" value="72">
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+               
+                <!-- EQUIPMENT SCOPE -->
+                <div class="row" style="justify-content: center;">
+                    <div class="col-12">
+                        <div class="panel-card equipment-panel">
+                            <div class="panel-header">
+                                <div>
+                                    <p class="eyebrow">Scope Builder</p>
+                                    <h3>Add Equipment & Runtime</h3>
+                                    <p>Use presets or customize each asset to update savings instantly.</p>
+                                </div>
+                                <div class="badge-pill"><i class="fas fa-sync-alt"></i> Auto-Refresh</div>
+                            </div>
+                            <div class="preset-deck">
+                                <button class="preset-btn" onclick="EquipmentManager.addPreset('motor', 10, 90, 8)">
+                                    <i class="fas fa-cogs"></i> Motor (10 HP)
+                                </button>
+                                <button class="preset-btn" onclick="EquipmentManager.addPreset('pump', 5, 88, 12)">
+                                    <i class="fas fa-tint"></i> Well Pump (5 HP)
+                                </button>
+                                <button class="preset-btn" onclick="EquipmentManager.addPreset('fan', 2, 85, 10)">
+                                    <i class="fas fa-fan"></i> Fan (2 HP)
+                                </button>
+                                <button class="preset-btn" onclick="EquipmentManager.addPreset('ac', 5, 14, 8)">
+                                    <i class="fas fa-snowflake"></i> AC System (5 Tons)
+                                </button>
+                            </div>
+                            <div class="progress-bar" id="progressBar" style="display:none;">
+                                <div class="progress-fill" id="progressFill"></div>
+                            </div>
+                            <div class="table-wrapper">
+                                <table id="systemsTable" style="display:none;">
+                                    <thead>
+                                        <tr>
+                                            <th class="qty-th"><i class="fas fa-layer-group"></i> Qty</th>
+                                            <th class="type-th"><i class="fas fa-cogs"></i> Type</th>
+                                            <th class="size-th"><i class="fas fa-weight"></i> Size (HP / Tons)</th>
+                                            <th class="eff-th"><i class="fas fa-tachometer-alt"></i> Eff% / SEER</th>
+                                            <th class="hours-th"><i class="fas fa-clock"></i> Hrs/Day</th>
+                                            <th class="hp-th"><i class="fas fa-snowflake"></i> Heat Pump?</th>
+                                            <th class="remove-th">Action</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody></tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+               
+                <!-- Savings Report Options -->
+                <div class="row summary-toolbar">
+                    <div class="col-12">
+                        <div class="panel-card summary-toolbar">
+                            <div class="panel-header">
+                                <div>
+                                    <p class="eyebrow">Report Options</p>
+                                    <h3>Share Savings Insights</h3>
+                                    <p>Choose a format, scenario focus, and copy a summary for CRM or email.</p>
+                                </div>
+                                <div class="toolbar-chip"><i class="fas fa-sliders-h"></i> Savings Only Mode</div>
+                            </div>
+                            <div class="toolbar-grid">
+                                <div class="toolbar-card">
+                                    <h4>Report Format</h4>
+                                    <small>Select how you'd like to present the savings.</small>
+                                    <select id="reportFormat">
+                                        <option value="summary" selected>Savings Summary</option>
+                                        <option value="detailed">Detailed Breakdown</option>
+                                    </select>
+                                </div>
+                                <div class="toolbar-card">
+                                    <h4>Scenario Focus</h4>
+                                    <small>Highlight conservative, base, or aggressive modeling.</small>
+                                    <select id="scenarioFocus">
+                                        <option value="0.1">Conservative (10%)</option>
+                                        <option value="0.2" selected>Baseline (20%)</option>
+                                        <option value="0.3">Aggressive (30%)</option>
+                                    </select>
+                                </div>
+                                <div class="toolbar-card">
+                                    <h4>Share Report</h4>
+                                    <small>Copy a one-click summary you can paste into CRM/email.</small>
+                                    <button type="button" class="action-btn" id="copySummary"><i class="fas fa-copy"></i> Copy Summary</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- RESULTS -->
+                <div class="row">
+                    <div class="col-12">
+                        <div id="results" class="sales-results" style="display: none;"></div>
+                        <div id="cta" style="display:none;"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+   
+    <footer>
+        <p>&copy; 2025 LeanAmp Technologies, Inc. | <a href="mailto:info@leanamp.com">info@leanamp.com</a> | <a href="https://leanamp.com" target="_blank" rel="noopener noreferrer">leanamp.com</a></p>
+    </footer>
+   
+    <script>
+        // ====== API KEYS ======
+        const GOOGLE_KEY = "AIzaSyDTfLuTCzrL7IrO8S0LjvZ4V9B_Zug7LIY";
+        const EIA_KEY = "IgjrSEu9bYnRggMOsSJcw9nYU0b76AZMTyrPfc7W";
+        const LOGO_URL = "../assets/logo.png?v=1";
+        const SAVINGS_SCENARIOS = [0.10, 0.20, 0.30];
+        
+        // ====== CONSTANTS ======
+        const CONSTANTS = {
+            BTU_PER_TON: 12000,
+            HP_TO_KW: 0.746,
+            WATTS_PER_KW: 1000,
+            WEEKS_PER_YEAR: 52,
+            BASE_CDD: 1500,
+            BASE_HDD: 5000,
+            AC_COOLING_LOAD_FACTOR: 0.70,
+            AC_HEATING_LOAD_FACTOR: 0.60,
+            MOTOR_LOAD_FACTOR: 0.85,
+            HSPF_TO_SEER_RATIO: 0.85,
+            HEATING_COP_DEGRADATION: 0.70,
+            CO2_PER_KWH: 0.000709,
+            TREES_PER_TON_CO2: 45,
+            CAR_EMISSIONS_PER_YEAR: 4.6,
+            COMMERCIAL_CAP_RATE: 0.08,
+            DEFAULT_RATE: 0.17,
+            DEFAULT_CDD: 1500,
+            DEFAULT_HDD: 5000,
+            DEFAULT_INDOOR_TEMP: 72,
+            DEFAULT_DAYS_PER_WEEK: 7,
+            BASE_SAVINGS_PCT: 0.20
+        };
+
+        function formatNumber(value, decimals = 0, fallback = "—") {
+            if (typeof value !== "number" || !isFinite(value)) return fallback;
+            return Number(value).toLocaleString(undefined, {
+                minimumFractionDigits: decimals,
+                maximumFractionDigits: decimals
+            });
+        }
+
+        function formatCurrency(value, decimals = 0, fallback = "$—") {
+            if (typeof value !== "number" || !isFinite(value)) return fallback;
+            return `$${formatNumber(value, decimals, fallback.replace("$", ""))}`;
+        }
+
+        function formatPercentDisplay(value, decimals = 1, fallback = "—") {
+            if (typeof value !== "number" || !isFinite(value)) return fallback;
+            return `${(value * 100).toFixed(decimals)}%`;
+        }
+
+        const NUMBER_FORMATTERS = {
+            number0: value => formatNumber(value, 0),
+            number1: value => formatNumber(value, 1),
+            number2: value => formatNumber(value, 2),
+            currency0: value => formatCurrency(value, 0),
+            currency2: value => formatCurrency(value, 2),
+            currency3: value => formatCurrency(value, 3),
+            percent1: value => formatPercentDisplay(value, 1)
+        };
+
+        const STATE_ABBREVIATIONS = {
+            "ALABAMA": "AL",
+            "ALASKA": "AK",
+            "ARIZONA": "AZ",
+            "ARKANSAS": "AR",
+            "CALIFORNIA": "CA",
+            "COLORADO": "CO",
+            "CONNECTICUT": "CT",
+            "DELAWARE": "DE",
+            "DISTRICT OF COLUMBIA": "DC",
+            "FLORIDA": "FL",
+            "GEORGIA": "GA",
+            "HAWAII": "HI",
+            "IDAHO": "ID",
+            "ILLINOIS": "IL",
+            "INDIANA": "IN",
+            "IOWA": "IA",
+            "KANSAS": "KS",
+            "KENTUCKY": "KY",
+            "LOUISIANA": "LA",
+            "MAINE": "ME",
+            "MARYLAND": "MD",
+            "MASSACHUSETTS": "MA",
+            "MICHIGAN": "MI",
+            "MINNESOTA": "MN",
+            "MISSISSIPPI": "MS",
+            "MISSOURI": "MO",
+            "MONTANA": "MT",
+            "NEBRASKA": "NE",
+            "NEVADA": "NV",
+            "NEW HAMPSHIRE": "NH",
+            "NEW JERSEY": "NJ",
+            "NEW MEXICO": "NM",
+            "NEW YORK": "NY",
+            "NORTH CAROLINA": "NC",
+            "NORTH DAKOTA": "ND",
+            "OHIO": "OH",
+            "OKLAHOMA": "OK",
+            "OREGON": "OR",
+            "PENNSYLVANIA": "PA",
+            "RHODE ISLAND": "RI",
+            "SOUTH CAROLINA": "SC",
+            "SOUTH DAKOTA": "SD",
+            "TENNESSEE": "TN",
+            "TEXAS": "TX",
+            "UTAH": "UT",
+            "VERMONT": "VT",
+            "VIRGINIA": "VA",
+            "WASHINGTON": "WA",
+            "WEST VIRGINIA": "WV",
+            "WISCONSIN": "WI",
+            "WYOMING": "WY"
+        };
+        
+        // ====== GLOBAL APP STATE ======
+        const AppState = {
+            rate: CONSTANTS.DEFAULT_RATE,
+            cdd: CONSTANTS.DEFAULT_CDD,
+            hdd: CONSTANTS.DEFAULT_HDD,
+            daysPerWeek: CONSTANTS.DEFAULT_DAYS_PER_WEEK,
+            indoorTemp: CONSTANTS.DEFAULT_INDOOR_TEMP,
+            customerType: "comm",
+            lastLookupInput: null,
+            lastProposalText: "",
+            lastProposalMeta: {},
+            lastProposalData: null,
+            logoDataUrl: null
+        };
+        
+        // ====== ENERGY CALC ENGINE ======
+        const EnergyCalculator = {
+            calculateACEnergy(tons, seer, hoursPerDay, daysPerWeek, cdd, isHeatPump = false, hdd = 0) {
+                if (!tons || !seer || !hoursPerDay) return 0;
+                const powerKw = (tons * CONSTANTS.BTU_PER_TON) / seer / CONSTANTS.WATTS_PER_KW;
+                const annualHours = hoursPerDay * CONSTANTS.WEEKS_PER_YEAR * daysPerWeek;
+                const climateFactor = cdd / CONSTANTS.BASE_CDD;
+                const coolingHours = annualHours * climateFactor * CONSTANTS.AC_COOLING_LOAD_FACTOR;
+                let totalKwh = powerKw * coolingHours;
+                
+                if (isHeatPump && hdd > 0) {
+                    const estimatedHSPF = seer * CONSTANTS.HSPF_TO_SEER_RATIO;
+                    const heatingPowerKw = (tons * CONSTANTS.BTU_PER_TON) / (estimatedHSPF * CONSTANTS.WATTS_PER_KW);
+                    const heatingClimateFactor = hdd / CONSTANTS.BASE_HDD;
+                    const heatingHours = annualHours * heatingClimateFactor * CONSTANTS.AC_HEATING_LOAD_FACTOR;
+                    totalKwh += heatingPowerKw * heatingHours * CONSTANTS.HEATING_COP_DEGRADATION;
+                }
+                
+                return totalKwh;
+            },
+            
+            calculateMotorEnergy(hp, efficiency, hoursPerDay, daysPerWeek) {
+                if (!hp || !efficiency || !hoursPerDay) return 0;
+                const powerKw = (hp * CONSTANTS.HP_TO_KW) / (efficiency / 100);
+                const effectivePowerKw = powerKw * CONSTANTS.MOTOR_LOAD_FACTOR;
+                const annualHours = hoursPerDay * CONSTANTS.WEEKS_PER_YEAR * daysPerWeek;
+                return effectivePowerKw * annualHours;
+            },
+            
+            calculateEnvironmental(totalKwh) {
+                const co2Tons = totalKwh * CONSTANTS.CO2_PER_KWH;
+                const trees = co2Tons * CONSTANTS.TREES_PER_TON_CO2;
+                const cars = co2Tons / CONSTANTS.CAR_EMISSIONS_PER_YEAR;
+                return { co2: co2Tons, trees, cars };
+            },
+            
+            calculateLoanPayment(principal, annualRate, months) {
+                if (!principal || !annualRate || !months) return 0;
+                const monthlyRate = annualRate / 100 / 12;
+                return principal * (monthlyRate * Math.pow(1 + monthlyRate, months)) /
+                       (Math.pow(1 + monthlyRate, months) - 1);
+            }
+        };
+        
+        // ====== OPEN-METEO DEGREE DAYS FETCHER ======
+        async function getDegreeDays(lat, lon) {
+            const baseTemp = 65;
+            let cdd = 0, hdd = 0;
+            const now = new Date();
+            const prevYear = now.getFullYear() - 1;
+            
+            // Use Open-Meteo archive API with Fahrenheit units
+            const url = `https://archive-api.open-meteo.com/v1/archive?latitude=${lat}&longitude=${lon}&start_date=${prevYear}-01-01&end_date=${prevYear}-12-31&daily=temperature_2m_max,temperature_2m_min&temperature_unit=fahrenheit&timezone=America/Denver`;
+            
+            try {
+                const res = await fetch(url);
+                if (!res.ok) throw new Error(`Open-Meteo API error: ${res.status}`);
+                
+                const data = await res.json();
+                
+                if (!data || !data.daily || !data.daily.temperature_2m_max) {
+                    console.warn("Open-Meteo returned no climate data — using defaults.");
+                    return {
+                        cdd: CONSTANTS.DEFAULT_CDD,
+                        hdd: CONSTANTS.DEFAULT_HDD
+                    };
+                }
+                
+                const maxArr = data.daily.temperature_2m_max;
+                const minArr = data.daily.temperature_2m_min;
+                
+                for (let i = 0; i < maxArr.length; i++) {
+                    const avg = (maxArr[i] + minArr[i]) / 2;
+                    cdd += Math.max(0, avg - baseTemp);
+                    hdd += Math.max(0, baseTemp - avg);
+                }
+                
+                console.log(`✅ Open-Meteo: Fetched ${maxArr.length} days of climate data`);
+                return {
+                    cdd: Math.round(cdd),
+                    hdd: Math.round(hdd)
+                };
+            } catch (err) {
+                console.error("Open-Meteo fetch error:", err);
+                return {
+                    cdd: CONSTANTS.DEFAULT_CDD,
+                    hdd: CONSTANTS.DEFAULT_HDD
+                };
+            }
+        }
+        
+        // ====== EQUIPMENT MANAGER ======
+        const AUTO_GENERATE_DELAY = 400;
+        let autoGenerateTimer = null;
+        const SPIN_DURATION = 1800;
+
+        function scheduleAutoGenerate(force = false) {
+            clearTimeout(autoGenerateTimer);
+            autoGenerateTimer = setTimeout(() => {
+                const equipmentCount = (typeof EquipmentManager !== "undefined" && EquipmentManager.getAllEquipment)
+                    ? EquipmentManager.getAllEquipment().length
+                    : 0;
+                if (!equipmentCount && !force) {
+                    return;
+                }
+                console.log('🔁 Auto generate triggered');
+                generateProposal();
+            }, AUTO_GENERATE_DELAY);
+        }
+
+        function spinNumbers(container) {
+            if (!container) return;
+            container.querySelectorAll('.spin-number').forEach(el => {
+                const finalValue = parseFloat(el.dataset.value);
+                const formatKey = el.dataset.format || 'number0';
+                const formatter = NUMBER_FORMATTERS[formatKey] || NUMBER_FORMATTERS.number0;
+                if (!isFinite(finalValue)) {
+                    if (el.dataset.fallback) {
+                        el.textContent = el.dataset.fallback;
+                    }
+                    return;
+                }
+                const magnitude = Math.max(Math.abs(finalValue), 1);
+                const direction = finalValue < 0 ? -1 : 1;
+                const start = performance.now();
+                const animate = (now) => {
+                    const elapsed = now - start;
+                    if (elapsed < SPIN_DURATION) {
+                        const randomFactor = 0.2 + Math.random() * 1.6;
+                        const interim = direction * (Math.random() * magnitude * randomFactor);
+                        el.textContent = formatter(interim);
+                        requestAnimationFrame(animate);
+                    } else {
+                        el.textContent = formatter(finalValue);
+                    }
+                };
+                requestAnimationFrame(animate);
+            });
+        }
+
+        const EquipmentManager = {
+            addPreset(type, size, eff, hours) {
+                const tbody = document.querySelector('#systemsTable tbody');
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td class="qty-td"><input type="number" class="qty-input" value="1" min="1" style="text-align:center;"></td>
+                    <td class="type-td">
+                        <select class="item-type">
+                            <option value="motor">Motor</option>
+                            <option value="pump">Pump</option>
+                            <option value="fan">Fan</option>
+                            <option value="ac">AC</option>
+                        </select>
+                    </td>
+                    <td class="size-td"><input type="number" class="size-input" value="${size}" min="0.1" step="0.1"></td>
+                    <td class="eff-td">
+                        <label class="eff-label" style="font-size:0.7em; display:block;">Eff</label>
+                        <input type="number" class="eff-input" value="${eff}">
+                    </td>
+                    <td class="hours-td"><input type="number" value="${hours}" min="1" max="24" class="hours-input"></td>
+                    <td class="hp-td hidden"><input type="checkbox" class="heatpump"> <small>Yes</small></td>
+                    <td class="remove-td"><button class="remove" onclick="EquipmentManager.removeRow(this)"><i class="fas fa-trash"></i></button></td>
+                `;
+                tbody.appendChild(row);
+                document.getElementById('systemsTable').style.display = 'table';
+                
+                // Set type and configure row fields
+                const typeSelect = row.querySelector('.item-type');
+                typeSelect.value = type;
+                this.updateRowFields(row);
+                typeSelect.addEventListener('change', () => this.updateRowFields(row));
+                const queueAutoGenerate = () => scheduleAutoGenerate();
+                row.addEventListener('input', queueAutoGenerate);
+                row.addEventListener('change', queueAutoGenerate);
+                scheduleAutoGenerate();
+            },
+            
+            updateRowFields(row) {
+                const type = row.querySelector('.item-type').value;
+                const sizeInput = row.querySelector('.size-input');
+                const effLabel = row.querySelector('.eff-label');
+                const effInput = row.querySelector('.eff-input');
+                const hpCell = row.querySelector('.hp-td');
+                
+                if (type === 'ac') {
+                    sizeInput.placeholder = 'Tons';
+                    sizeInput.min = '0.5';
+                    sizeInput.step = '0.5';
+                    effLabel.textContent = 'SEER';
+                    if (!effInput.value) effInput.value = 14;
+                    effInput.min = 8;
+                    effInput.max = 30;
+                    hpCell.classList.remove('hidden');
+                } else {
+                    sizeInput.placeholder = 'HP';
+                    sizeInput.min = '0.1';
+                    sizeInput.step = '0.1';
+                    effLabel.textContent = 'Eff (%)';
+                    if (!effInput.value) effInput.value = 90;
+                    effInput.min = 50;
+                    effInput.max = 100;
+                    hpCell.classList.add('hidden');
+                }
+            },
+            
+            removeRow(btn) {
+                const row = btn.closest('tr');
+                if (row) row.remove();
+                const tbody = document.querySelector('#systemsTable tbody');
+                if (!tbody.children.length) {
+                    document.getElementById('systemsTable').style.display = 'none';
+                }
+                scheduleAutoGenerate(true);
+            },
+            
+            getAllEquipment() {
+                const rows = [];
+                document.querySelectorAll('#systemsTable tbody tr').forEach(row => {
+                    rows.push({
+                        qty: parseFloat(row.querySelector('.qty-input').value) || 1,
+                        type: row.querySelector('.item-type').value,
+                        size: parseFloat(row.querySelector('.size-input').value) || 0,
+                        eff: parseFloat(row.querySelector('.eff-input').value) || 85,
+                        hours: parseFloat(row.querySelector('.hours-input').value) || 8,
+                        isHeatPump: row.querySelector('.heatpump')?.checked || false
+                    });
+                });
+                return rows;
+            }
+        };
+        // Expose for inline onclick handlers defined in the markup
+        window.EquipmentManager = EquipmentManager;
+        
+        // ====== GOOGLE PLACES AUTOCOMPLETE FOR VALIDATION ======
+        let autocompleteInstance = null;
+        let autocompleteAttempts = 0;
+        const MAX_AUTOCOMPLETE_ATTEMPTS = 10;
+        const FallbackAutocomplete = {
+            active: false,
+            initialized: false,
+            debounceTimer: null,
+            controller: null,
+            results: []
+        };
+        
+        function enableFallbackAutocomplete(reason = '') {
+            if (FallbackAutocomplete.active) {
+                if (reason) console.info('Fallback autocomplete already active:', reason);
+                return;
+            }
+            FallbackAutocomplete.active = true;
+            console.warn('⚠️ Enabling fallback autocomplete:', reason || 'Unknown issue');
+            const statusEl = document.getElementById('lookupStatus');
+            if (statusEl) {
+                statusEl.innerHTML = '<strong style="color: orange;">Google autocomplete unavailable.</strong> Using fallback suggestions powered by OpenStreetMap.';
+            }
+            setupFallbackAutocomplete();
+            const input = document.getElementById('zipOrAddress');
+            if (input && input.value.trim().length >= 3) {
+                fetchFallbackSuggestions(input.value.trim());
+            }
+        }
+
+        function setupFallbackAutocomplete() {
+            if (FallbackAutocomplete.initialized) return;
+            const input = document.getElementById('zipOrAddress');
+            const suggestions = document.getElementById('addressSuggestions');
+            if (!input || !suggestions) {
+                console.error('❌ Fallback autocomplete missing DOM nodes');
+                return;
+            }
+
+            input.setAttribute('autocomplete', 'off');
+
+            input.addEventListener('input', () => {
+                const query = input.value.trim();
+                if (FallbackAutocomplete.debounceTimer) {
+                    clearTimeout(FallbackAutocomplete.debounceTimer);
+                }
+                if (query.length < 3) {
+                    suggestions.classList.remove('visible');
+                    suggestions.innerHTML = '';
+                    return;
+                }
+                FallbackAutocomplete.debounceTimer = setTimeout(() => {
+                    fetchFallbackSuggestions(query);
+                }, 300);
+            });
+
+            document.addEventListener('click', (evt) => {
+                if (!suggestions.contains(evt.target) && evt.target !== input) {
+                    suggestions.classList.remove('visible');
+                }
+            });
+
+            suggestions.addEventListener('click', async (evt) => {
+                const item = evt.target.closest('.suggestion-item');
+                if (!item) return;
+                const index = parseInt(item.dataset.index, 10);
+                if (Number.isNaN(index) || !FallbackAutocomplete.results[index]) {
+                    return;
+                }
+                try {
+                    await selectFallbackSuggestion(FallbackAutocomplete.results[index]);
+                } catch (err) {
+                    console.error('❌ Error selecting fallback suggestion:', err);
+                }
+            });
+
+            FallbackAutocomplete.initialized = true;
+            console.log('✅ Fallback autocomplete initialized');
+        }
+
+        function escapeHTML(str = '') {
+            return str.replace(/[&<>"']/g, (char) => ({
+                '&': '&amp;',
+                '<': '&lt;',
+                '>': '&gt;',
+                '"': '&quot;',
+                "'": '&#39;'
+            }[char] || char));
+        }
+
+        async function fetchFallbackSuggestions(query) {
+            const suggestions = document.getElementById('addressSuggestions');
+            if (!suggestions) return;
+
+            if (FallbackAutocomplete.controller) {
+                FallbackAutocomplete.controller.abort();
+            }
+            const controller = new AbortController();
+            FallbackAutocomplete.controller = controller;
+
+            suggestions.innerHTML = '<div class="suggestion-item muted">Searching...</div>';
+            suggestions.classList.add('visible');
+            console.log('🔍 Fallback lookup:', query);
+
+            try {
+                const url = `https://nominatim.openstreetmap.org/search?format=jsonv2&addressdetails=1&limit=5&q=${encodeURIComponent(query)}`;
+                const res = await fetch(url, {
+                    signal: controller.signal,
+                    headers: { 'Accept': 'application/json' }
+                });
+                if (!res.ok) throw new Error(`Fallback lookup failed (${res.status})`);
+                const data = await res.json();
+                FallbackAutocomplete.results = data;
+                console.log(`✅ Fallback suggestions received: ${data.length}`);
+                renderFallbackSuggestions(data);
+            } catch (error) {
+                if (error.name === 'AbortError') return;
+                console.error('❌ Fallback autocomplete error:', error);
+                suggestions.innerHTML = '<div class="suggestion-item muted">Unable to fetch suggestions</div>';
+                suggestions.classList.add('visible');
+            }
+        }
+
+        function renderFallbackSuggestions(items = []) {
+            const suggestions = document.getElementById('addressSuggestions');
+            if (!suggestions) return;
+
+            if (!items.length) {
+                suggestions.innerHTML = '<div class="suggestion-item muted">No matches found</div>';
+                suggestions.classList.add('visible');
+                return;
+            }
+
+            suggestions.innerHTML = items.map((item, idx) => {
+                const parts = (item.display_name || '').split(',');
+                const primary = parts.shift()?.trim() || 'Result';
+                const secondary = parts.join(', ').trim();
+                return `
+                    <div class="suggestion-item" data-index="${idx}">
+                        <strong>${escapeHTML(primary)}</strong>
+                        <small>${escapeHTML(secondary)}</small>
+                    </div>
+                `;
+            }).join('');
+            suggestions.classList.add('visible');
+        }
+
+        async function selectFallbackSuggestion(place) {
+            const input = document.getElementById('zipOrAddress');
+            const suggestions = document.getElementById('addressSuggestions');
+            if (!input || !suggestions || !place) return;
+
+            suggestions.classList.remove('visible');
+            suggestions.innerHTML = '';
+            console.log('📍 Fallback selection:', place.display_name);
+
+            const formatted = place.display_name || input.value;
+            const lat = parseFloat(place.lat);
+            const lon = parseFloat(place.lon);
+            const address = place.address || {};
+            const stateName = address.state || address.state_district || address.county || '';
+            const state = getStateCode(stateName);
+
+            input.value = formatted;
+            const customerAddress = document.getElementById('customerAddress');
+            if (customerAddress) {
+                customerAddress.value = formatted;
+            }
+
+            const detected = document.getElementById('detectedLocation');
+            if (detected) {
+                detected.textContent = state ? `${state} - ${formatted}` : formatted;
+            }
+
+            AppState.lastLookupInput = formatted;
+            const statusEl = document.getElementById('lookupStatus');
+            const errorEl = document.getElementById('lookupError');
+            if (errorEl) errorEl.style.display = 'none';
+            if (statusEl) statusEl.innerHTML = '<strong>Fetching data...</strong>';
+
+            if (!Number.isFinite(lat) || !Number.isFinite(lon)) {
+                throw new Error('Invalid coordinates from fallback suggestion.');
+            }
+
+            await fetchRateAndWeather(lat, lon, state);
+            if (statusEl) {
+                    statusEl.innerHTML = `<strong>✅ Success!</strong> Rate: $${AppState.rate.toFixed(3)}/kWh, CDD: ${AppState.cdd}, HDD: ${AppState.hdd}`;
+            }
+        }
+
+        function getStateCode(value = '') {
+            const normalized = value.trim().toUpperCase();
+            if (!normalized) return '';
+            if (STATE_ABBREVIATIONS[normalized]) return STATE_ABBREVIATIONS[normalized];
+            if (normalized.length === 2) return normalized;
+            return '';
+        }
+
+        function initAutocomplete() {
+            autocompleteAttempts++;
+            
+            // Check if Google Maps is loaded
+            if (!window.google || !window.google.maps || !window.google.maps.places) {
+                if (autocompleteAttempts < MAX_AUTOCOMPLETE_ATTEMPTS) {
+                    console.log(`⏳ Waiting for Google Maps... (attempt ${autocompleteAttempts})`);
+                    setTimeout(initAutocomplete, 500);
+                } else {
+                    console.warn('⚠️ Google Maps failed to load after multiple attempts');
+                    document.getElementById('lookupStatus').innerHTML =
+                        '<strong style="color: orange;">Note:</strong> Address autocomplete unavailable. You can still enter ZIP codes and click "Auto-Fill".';
+                    enableFallbackAutocomplete('Google Maps script never finished loading.');
+                }
+                return;
+            }
+            
+            // Prevent duplicate initialization
+            if (autocompleteInstance) {
+                console.log('ℹ️ Autocomplete already initialized');
+                return;
+            }
+            
+            const input = document.getElementById('zipOrAddress');
+            if (!input) {
+                console.error('❌ Cannot find zipOrAddress input field');
+                return;
+            }
+            
+            try {
+                autocompleteInstance = new google.maps.places.Autocomplete(input, {
+                    types: ['address'],
+                    componentRestrictions: { country: 'us' },
+                    fields: ['formatted_address', 'address_components', 'geometry']
+                });
+                
+                autocompleteInstance.addListener('place_changed', async () => {
+                    console.log('📍 Place selected from autocomplete');
+                    const place = autocompleteInstance.getPlace();
+                    
+                    if (!place.geometry || !place.geometry.location) {
+                        console.warn('⚠️ Selected place has no geometry');
+                        document.getElementById('lookupStatus').innerHTML = 
+                            '<strong style="color: orange;">Please select a complete address from the dropdown</strong>';
+                        return;
+                    }
+                    
+                    console.log('✅ Valid place selected:', place.formatted_address);
+                    
+                    // Auto-fill customer address field
+                    document.getElementById('customerAddress').value = place.formatted_address;
+                    
+                    const lat = place.geometry.location.lat();
+                    const lon = place.geometry.location.lng();
+                    
+                    const components = place.address_components || [];
+                    const stateComponent = components.find(c => c.types.includes('administrative_area_level_1'));
+                    const state = stateComponent ? stateComponent.short_name.toUpperCase() : '';
+                    
+                    console.log(`📊 Coordinates: ${lat}, ${lon}, State: ${state}`);
+                    
+                    // Update detected location
+                    document.getElementById('detectedLocation').textContent = state 
+                        ? `${state} - ${place.formatted_address}` 
+                        : `${place.formatted_address}`;
+                    
+                    AppState.lastLookupInput = place.formatted_address;
+                    
+                    // Fetch rate and weather
+                    document.getElementById('lookupStatus').innerHTML = '<strong>Fetching data...</strong>';
+                    document.getElementById('lookupError').style.display = 'none';
+                    
+                    await fetchRateAndWeather(lat, lon, state);
+                    
+                    document.getElementById('lookupStatus').innerHTML = 
+                        `<strong>✅ Success!</strong> Rate: $${AppState.rate.toFixed(3)}/kWh, CDD: ${AppState.cdd}, HDD: ${AppState.hdd}`;
+                });
+                
+                console.log('✅ Google Places Autocomplete initialized successfully');
+                document.getElementById('lookupStatus').innerHTML = 
+                    '<strong>Ready!</strong> Start typing for autocomplete, or enter ZIP and click "Auto-Fill".';
+                    
+            } catch (error) {
+                console.error('❌ Error initializing autocomplete:', error);
+                document.getElementById('lookupStatus').innerHTML =
+                    '<strong style="color: orange;">Autocomplete unavailable.</strong> You can still enter ZIP codes.';
+                enableFallbackAutocomplete(error?.message || 'Unknown autocomplete error');
+            }
+        }
+        
+        // Set up callback for when Google Maps loads
+        window.googleMapsReady = function() {
+            console.log('🗺️ Google Maps ready callback triggered');
+            setTimeout(initAutocomplete, 100);
+        };
+
+        window.gm_authFailure = function() {
+            console.error('❌ Google Maps authentication failed for this domain.');
+            enableFallbackAutocomplete('Google Maps authentication failure (check API key restrictions).');
+        };
+
+        window.addEventListener('error', (event) => {
+            const message = event?.message || '';
+            if (typeof message === 'string' && message.includes('RefererNotAllowedMapError')) {
+                enableFallbackAutocomplete('Google rejected this referrer.');
+            }
+        });
+        
+        // ====== FETCH RATE AND WEATHER (shared for manual lookup and autocomplete) ======
+        function updateRateDisplays(value = AppState.rate) {
+            const sanitized = Number(value) || CONSTANTS.DEFAULT_RATE;
+            AppState.rate = sanitized;
+            const slider = document.getElementById("rateSlider");
+            const sliderLabel = document.getElementById("rateDisplay");
+            const apiRateEl = document.getElementById("apiRateDisplay");
+            if (slider) {
+                slider.value = sanitized.toFixed(2);
+            }
+            if (sliderLabel) {
+                sliderLabel.textContent = sanitized.toFixed(3);
+            }
+            if (apiRateEl) {
+                apiRateEl.textContent = sanitized.toFixed(3);
+            }
+        }
+
+        async function fetchRateAndWeather(lat, lon, state = '') {
+            const statusEl = document.getElementById("lookupStatus");
+            const apiRateEl = document.getElementById("apiRateDisplay");
+            const apiCddEl = document.getElementById("apiCddDisplay");
+            const apiHddEl = document.getElementById("apiHddDisplay");
+            
+            console.log(`⚡ Fetching data for: Lat ${lat}, Lon ${lon}, State: ${state}`);
+            statusEl.innerHTML = `<strong>Fetching rates & climate...</strong>`;
+            
+            try {
+                // === EIA: Utility Rate ===
+                let rate = CONSTANTS.DEFAULT_RATE;
+                if (state && EIA_KEY !== 'your_eia_api_key_here') {
+                    console.log(`💰 Fetching EIA rate for ${state}...`);
+                    const sector = AppState.customerType === 'res' ? 'RES' : 'COM';
+                    const eiaRes = await fetch(`https://api.eia.gov/v2/electricity/retail-sales/data?api_key=${EIA_KEY}&data[]=price&facets[sectorid][]=${sector}&facets[stateid][]=${state}&frequency=annual&sort[0][column]=period&sort[0][direction]=desc&length=1`);
+                    const eiaData = await eiaRes.json();
+                    const rateCents = eiaData.response?.data?.[0]?.price;
+                    rate = rateCents ? rateCents / 100 : CONSTANTS.DEFAULT_RATE;
+                    console.log(`✅ EIA rate: $${rate.toFixed(3)}/kWh`);
+                } else {
+                    console.log(`ℹ️ Using default rate (no state or no EIA key)`);
+                }
+                updateRateDisplays(rate);
+
+                // === Open-Meteo: Degree Days ===
+                console.log('🌡️ Fetching degree days from Open-Meteo...');
+                const degreeData = await getDegreeDays(lat, lon);
+                AppState.cdd = degreeData.cdd;
+                AppState.hdd = degreeData.hdd;
+                console.log(`✅ Climate data: CDD ${AppState.cdd}, HDD ${AppState.hdd}`);
+                
+                // Update displays and sliders
+                apiCddEl.textContent = AppState.cdd;
+                apiHddEl.textContent = AppState.hdd;
+
+                const cddSlider = document.getElementById("cddSlider");
+                const cddDisplay = document.getElementById("cddDisplay");
+                cddSlider.value = AppState.cdd;
+                cddDisplay.textContent = AppState.cdd;
+                
+                const hddSlider = document.getElementById("hddSlider");
+                const hddDisplay = document.getElementById("hddDisplay");
+                hddSlider.value = AppState.hdd;
+                hddDisplay.textContent = AppState.hdd;
+
+                autoRegenerateProposal();
+                
+                console.log('✅ All data fetched and updated successfully');
+
+            } catch (err) {
+                console.error('❌ Error in fetchRateAndWeather:', err);
+                statusEl.innerHTML = `<strong>Error:</strong> ${err.message}`;
+            }
+        }
+
+        function autoRegenerateProposal() {
+            scheduleAutoGenerate();
+        }
+
+        async function getLogoDataUrl() {
+            if (AppState.logoDataUrl) return AppState.logoDataUrl;
+            try {
+                const res = await fetch(LOGO_URL, { mode: "cors" });
+                const blob = await res.blob();
+                const reader = new FileReader();
+                return await new Promise((resolve, reject) => {
+                    reader.onload = () => {
+                        AppState.logoDataUrl = reader.result;
+                        resolve(reader.result);
+                    };
+                    reader.onerror = reject;
+                    reader.readAsDataURL(blob);
+                });
+            } catch (err) {
+                console.warn("⚠️ Unable to load logo for PDF:", err);
+                return null;
+            }
+        }
+
+        async function exportProposalAsPDF() {
+            if (!AppState.lastProposalText) {
+                alert("Please generate a proposal first.");
+                return;
+            }
+            if (!window.jspdf || !window.jspdf.jsPDF) {
+                alert("PDF library failed to load. Please refresh the page and try again.");
+                return;
+            }
+            const { jsPDF } = window.jspdf;
+            const doc = new jsPDF({ unit: "mm", format: "letter" });
+            const meta = AppState.lastProposalMeta || {};
+            const projectName = meta.projectName || "LeanAmp Project";
+            const customerName = meta.customerName || "Customer";
+            const formatSelect = document.getElementById("pdfFormat");
+            const format = formatSelect ? formatSelect.value : "itemized";
+            const data = AppState.lastProposalData;
+            const safeNum = (value, decimals = 0, fallback = "N/A") =>
+                typeof value === "number" && isFinite(value) ? value.toFixed(decimals) : fallback;
+            const fmt = (num, decimals = 0, fallback = "N/A") => {
+                if (typeof num !== "number" || !isFinite(num)) return fallback;
+                return Number(num).toLocaleString(undefined, { minimumFractionDigits: decimals, maximumFractionDigits: decimals });
+            };
+
+            const fmtCurrency = (num, decimals = 0) => {
+                if (typeof num !== "number" || !isFinite(num)) return "$N/A";
+                return `$${fmt(num, decimals)}`;
+            };
+            const generatedDate = new Date().toLocaleString();
+            const rateValue = typeof data?.rate === "number" ? data.rate : AppState.rate;
+            const baselineKwh = data?.baselineKwh || 0;
+            const annualDollarSavings = data?.annualDollarSavings || 0;
+            const monthlySavings = data?.monthlySavings || (annualDollarSavings / 12);
+            const tenYearSavings = data?.tenYearSavings || (annualDollarSavings * 10);
+            const propertyValueLift = data?.propertyValueLift || (annualDollarSavings > 0 ? annualDollarSavings / CONSTANTS.COMMERCIAL_CAP_RATE : 0);
+            const scenarioPercents = SAVINGS_SCENARIOS;
+            const scenarioRows = scenarioPercents.map(pct => {
+                const label = `${Math.round(pct * 100)}% Savings`;
+                const savingsDollar = baselineKwh * pct * rateValue;
+                const monthly = savingsDollar / 12;
+                const tenYear = savingsDollar * 10;
+                return {
+                    label,
+                    savings: fmtCurrency(savingsDollar, 0),
+                    monthly: fmtCurrency(monthly, 0),
+                    tenYear: fmtCurrency(tenYear, 0)
+                };
+            });
+            const footerText = `Generated: ${generatedDate} | LeanAmp Technologies, Inc.`;
+            const pageWidth = doc.internal.pageSize.getWidth();
+            const pageHeight = doc.internal.pageSize.getHeight();
+            const cardWidth = pageWidth - 20;
+            const startX = 10;
+            let y = 90;
+            const logoData = await getLogoDataUrl();
+            const drawHeader = () => {
+                doc.setFillColor(0, 100, 0);
+                doc.rect(0, 0, pageWidth, 60, "F");
+                doc.setFillColor(255, 255, 255);
+                if (logoData) {
+                    doc.addImage(logoData, "JPEG", 10, 10, 40, 40);
+                }
+                doc.setTextColor(255, 255, 255);
+                doc.setFontSize(20);
+                doc.setFont("helvetica", "bold");
+                doc.text("LeanAmp Technologies", 60, 30);
+                doc.setFontSize(10);
+                doc.setFont("helvetica", "normal");
+                doc.text("AI energy optimization: 10–30% guaranteed savings", 60, 40);
+                doc.text("for agriculture, mining, commercial.", 60, 47);
+                doc.setFontSize(8);
+                doc.text("sales@leanamp.com | leanamp.com | © 2025 LeanAmp Technologies, Inc.", pageWidth / 2, 57, { align: "center" });
+                doc.setTextColor(0, 100, 0);
+                doc.setFontSize(18);
+                doc.setFont("helvetica", "bold");
+                doc.text("Optimization Savings Report", 10, 75);
+                doc.setTextColor(0, 0, 0);
+                doc.setFont("helvetica", "normal");
+                y = 90;
+            };
+            const addFooter = () => {
+                doc.setTextColor(0, 100, 0);
+                doc.setFontSize(8);
+                doc.text(`${footerText} | Page ${doc.internal.getNumberOfPages()}`, pageWidth / 2, pageHeight - 10, { align: "center" });
+                doc.setTextColor(0, 0, 0);
+                doc.setFont("helvetica", "normal");
+            };
+            const ensureSpace = (needed = 30) => {
+                if (y + needed > pageHeight - 20) {
+                    addFooter();
+                    doc.addPage();
+                    drawHeader();
+                }
+            };
+            const drawSectionCard = (title, rows = []) => {
+                if (!rows.length) return;
+                ensureSpace(20);
+                doc.setFillColor(0, 100, 0);
+                doc.setTextColor(255, 255, 255);
+                doc.setFont("helvetica", "bold");
+                doc.setFontSize(12);
+                doc.roundedRect(startX, y, cardWidth, 8, 3, 3, "F");
+                doc.text(title, startX + 4, y + 6);
+                y += 10;
+                doc.setTextColor(0, 0, 0);
+                const padding = 6;
+                let height = padding;
+                rows.forEach(row => {
+                    const labelWidth = row.label ? doc.getTextWidth(`${row.label}: `) : 0;
+                    const value = row.value ?? row;
+                    const wrap = doc.splitTextToSize(value, cardWidth - padding * 2 - labelWidth - 2);
+                    height += wrap.length * 5 + 2;
+                });
+                height += padding;
+                ensureSpace(height);
+                doc.setDrawColor(220, 220, 220);
+                doc.setFillColor(255, 255, 255);
+                doc.roundedRect(startX, y, cardWidth, height, 3, 3, "FD");
+                let textY = y + padding + 2;
+                rows.forEach(row => {
+                    const label = row.label ? `${row.label}: ` : "";
+                    const value = row.value ?? row;
+                    if (row.label) {
+                        doc.setFont("helvetica", "bold");
+                        doc.text(label, startX + padding, textY);
+                        const labelWidth = doc.getTextWidth(label);
+                        doc.setFont("helvetica", "normal");
+                        const wrap = doc.splitTextToSize(value, cardWidth - padding * 2 - labelWidth);
+                        wrap.forEach((line, idx) => {
+                            doc.text(line, idx === 0 ? startX + padding + labelWidth : startX + padding, textY);
+                            textY += 5;
+                        });
+                    } else {
+                        doc.setFont("helvetica", "normal");
+                        const wrap = doc.splitTextToSize(value, cardWidth - padding * 2);
+                        wrap.forEach(line => {
+                            doc.text(line, startX + padding, textY);
+                            textY += 5;
+                        });
+                    }
+                    textY += 2;
+                });
+                y += height + 8;
+            };
+            const drawScenarioComparison = rows => {
+                if (!rows.length) return;
+                const headerHeight = 8;
+                const rowHeight = 8;
+                const tableHeight = headerHeight + rowHeight * rows.length + 16;
+                ensureSpace(tableHeight);
+                doc.setFillColor(0, 100, 0);
+                doc.setTextColor(255, 255, 255);
+                doc.setFont("helvetica", "bold");
+                doc.rect(startX, y, cardWidth, 8, "F");
+                doc.text("Scenario Comparison", startX + 4, y + 6);
+                y += 10;
+                doc.setFontSize(10);
+                doc.setFillColor(245, 245, 245);
+                doc.rect(startX, y, cardWidth, headerHeight, "F");
+                doc.setTextColor(0, 0, 0);
+                doc.text("Scenario", startX + 4, y + 6);
+                doc.text("Annual Savings", startX + 62, y + 6);
+                doc.text("Monthly Savings", startX + 118, y + 6);
+                doc.text("10-Year Savings", startX + 168, y + 6);
+                y += headerHeight;
+                rows.forEach(row => {
+                    doc.rect(startX, y, cardWidth, rowHeight);
+                    doc.text(row.label, startX + 4, y + 5);
+                    doc.text(row.savings, startX + 62, y + 5);
+                    doc.text(row.monthly, startX + 118, y + 5);
+                    doc.text(row.tenYear, startX + 168, y + 5);
+                    y += rowHeight;
+                });
+                y += 12;
+            };
+            const drawGuaranteeBar = text => {
+                ensureSpace(20);
+                const wrapped = doc.splitTextToSize(text, cardWidth - 12);
+                const barHeight = wrapped.length * 5 + 6;
+                doc.setFillColor(210, 255, 210);
+                doc.roundedRect(startX, y, cardWidth, barHeight, 2, 2, "F");
+                doc.setFont("helvetica", "bold");
+                doc.setTextColor(0, 100, 0);
+                wrapped.forEach((line, idx) => {
+                    doc.text(line, pageWidth / 2, y + 6 + idx * 5, { align: "center" });
+                });
+                y += barHeight + 6;
+                doc.setTextColor(0, 0, 0);
+            };
+            const drawScopeHighlights = (details, options = {}) => {
+                const showPricing = !!options.showPricing;
+                const items = (details || []).slice(0, showPricing ? 12 : 10);
+                if (!items.length) {
+                    drawSectionCard("Scope Highlights", [{ value: "Scope modeled as lump sum." }]);
+                    return;
+                }
+
+                const padding = 6;
+                let headerHeight = 8;
+                const columnConfig = showPricing
+                    ? [
+                        { title: "Scope Item", width: 44, accessor: item => item.label || "Scope Item" },
+                        { title: "Tons", width: 16, accessor: item => item.tonsDisplay || "—" },
+                        { title: "HP", width: 16, accessor: item => item.hpDisplay || "—" },
+                        { title: "SEER", width: 18, accessor: item => item.seerDisplay || "—" },
+                        { title: "kWh / Yr", width: 28, accessor: item => item.kwhLabel || "—" },
+                        {
+                            title: "Line Price",
+                            width: 28,
+                            accessor: item => {
+                                if (typeof item.linePrice === "number" && isFinite(item.linePrice)) {
+                                    return fmtCurrency(item.linePrice, 0);
+                                }
+                                if (item.isProfitLine && typeof item.linePrice === "number") {
+                                    return fmtCurrency(item.linePrice, 0);
+                                }
+                                return "$N/A";
+                            }
+                        },
+                        {
+                            title: "ROI (Months)",
+                            width: 18,
+                            accessor: item => {
+                                if (item.isProfitLine) return "N/A";
+                                if (typeof item.roiMonths === "number" && isFinite(item.roiMonths)) {
+                                    return fmt(item.roiMonths, 1);
+                                }
+                                return "N/A";
+                            }
+                        }
+                    ]
+                    : [
+                        { title: "Scope Item", width: 58, accessor: item => item.label || "Scope Item" },
+                        { title: "Key Specs", width: 48, accessor: item => item.summarySpec || item.sizeLabel || "—" },
+                        { title: "Annual Energy", width: 34, accessor: item => item.kwhLabel || "—" },
+                        { title: "Annual Savings", width: 32, accessor: item => item.savingsLabel ? `${item.savingsLabel}/yr` : "—" },
+                        { title: "Savings Share", width: 26, accessor: item => item.savingsShareLabel || "—" }
+                    ];
+
+                const tableWidth = cardWidth - padding * 2;
+                const columns = columnConfig.map(col => ({ ...col }));
+                const minColWidth = 12;
+                const gapWidth = 4;
+                const totalGaps = gapWidth * (columns.length - 1);
+                const availableWidth = tableWidth - totalGaps;
+                const currentWidth = columns.reduce((sum, col) => sum + col.width, 0);
+                if (currentWidth > availableWidth) {
+                    const scale = availableWidth / currentWidth;
+                    columns.forEach(col => {
+                        col.width = Math.max(minColWidth, Math.floor(col.width * scale));
+                    });
+                }
+                let adjustedWidth = columns.reduce((sum, col) => sum + col.width, 0);
+                let widthDiff = availableWidth - adjustedWidth;
+                let safetyCounter = 0;
+                while (Math.abs(widthDiff) > 0 && safetyCounter < 500) {
+                    for (let i = 0; i < columns.length && widthDiff !== 0; i++) {
+                        if (widthDiff > 0) {
+                            columns[i].width += 1;
+                            widthDiff--;
+                        } else if (widthDiff < 0 && columns[i].width > minColWidth) {
+                            columns[i].width -= 1;
+                            widthDiff++;
+                        }
+                    }
+                    safetyCounter++;
+                }
+                const colPositions = [];
+                let colCursor = startX + padding + 2;
+                columns.forEach(col => {
+                    colPositions.push(colCursor);
+                    colCursor += col.width + gapWidth;
+                });
+
+                const rowData = items.map(item => {
+                    const colLines = columns.map(col => {
+                        const text = col.accessor(item) || "—";
+                        return doc.splitTextToSize(text, col.width);
+                    });
+                    const rowHeight = Math.max(...colLines.map(lines => lines.length || 1)) * 5 + 6;
+                    return { colLines, rowHeight };
+                });
+                const headerLineCounts = columns.map(col => {
+                    const headerLines = doc.splitTextToSize(col.title, col.width);
+                    return Math.max(headerLines.length, 1);
+                });
+                headerHeight = Math.max(headerHeight, Math.max(...headerLineCounts) * 4 + 4);
+
+                const rowsHeight = rowData.reduce((sum, r) => sum + r.rowHeight, 0);
+                const cardHeight = padding * 2 + headerHeight + rowsHeight;
+
+                ensureSpace(cardHeight + 20);
+
+                doc.setFillColor(0, 100, 0);
+                doc.setTextColor(255, 255, 255);
+                doc.setFont("helvetica", "bold");
+                doc.setFontSize(12);
+                doc.roundedRect(startX, y, cardWidth, 8, 3, 3, "F");
+                doc.text("Scope Highlights", pageWidth / 2, y + 6, { align: "center" });
+                y += 10;
+
+                doc.setDrawColor(220, 220, 220);
+                doc.setFillColor(255, 255, 255);
+                doc.roundedRect(startX, y, cardWidth, cardHeight, 3, 3, "FD");
+                let contentY = y + padding;
+
+                doc.setFillColor(245, 245, 245);
+                doc.rect(startX + padding, contentY, tableWidth, headerHeight, "F");
+                doc.setTextColor(0, 0, 0);
+                doc.setFontSize(9);
+                columns.forEach((col, idx) => {
+                    const headerLines = doc.splitTextToSize(col.title, col.width);
+                    const headerStartY = contentY + 5 + (headerHeight - headerLines.length * 4) / 2;
+                    headerLines.forEach((line, lineIdx) => {
+                        doc.text(line, colPositions[idx] + col.width / 2, headerStartY + lineIdx * 4, { align: "center" });
+                    });
+                });
+                contentY += headerHeight;
+
+                doc.setFont("helvetica", "normal");
+                rowData.forEach((row, idx) => {
+                    const fillColor = idx % 2 === 0 ? 252 : 242;
+                    doc.setFillColor(fillColor);
+                    doc.rect(startX + padding, contentY, tableWidth, row.rowHeight, "F");
+                    columns.forEach((col, colIdx) => {
+                        let lineY = contentY + 5;
+                        row.colLines[colIdx].forEach(line => {
+                            doc.text(line, colPositions[colIdx] + col.width / 2, lineY, { align: "center" });
+                            lineY += 5;
+                        });
+                    });
+                    contentY += row.rowHeight;
+                });
+                y += cardHeight + 10;
+            };
+            drawHeader();
+            drawSectionCard("Project Overview", [
+                { label: "Project", value: projectName },
+                { label: "Customer", value: customerName },
+                meta.address ? { label: "Facility", value: meta.address } : null,
+                meta.contact ? { label: "Contact", value: meta.contact } : null
+            ].filter(Boolean));
+            drawSectionCard("Savings Summary", [
+                { label: "Estimated Annual Savings", value: fmtCurrency(annualDollarSavings, 0) },
+                { label: "Monthly Savings", value: fmtCurrency(monthlySavings, 0) },
+                { label: "10-Year Savings", value: fmtCurrency(tenYearSavings, 0) },
+                { label: "Property Value Lift (6% cap)", value: fmtCurrency(propertyValueLift, 0) }
+            ]);
+            drawScenarioComparison(scenarioRows);
+            drawGuaranteeBar("PERFORMANCE GUARANTEE: ROI or the System is FREE.");
+            drawSectionCard("Environmental & ESG Impact", [
+                { label: "Carbon Reduction", value: `${fmt(data?.envImpact?.co2, 2)} metric tons / year` },
+                { label: "Trees Equivalent", value: fmt(data?.envImpact?.trees, 0) },
+                { label: "Vehicles Removed", value: fmt(data?.envImpact?.cars, 2) }
+            ]);
+            drawSectionCard("Project Metrics", [
+                { label: "Baseline Load", value: `~${fmt(baselineKwh, 0)} kWh/year` },
+                { label: "Energy Saved", value: `~${fmt(data?.savedKwhPerYear, 0)} kWh/year` },
+                { label: "Assumed Savings", value: `${fmt((data?.savingsPct || 0) * 100, 1)}%` },
+                { label: "Rate", value: `${fmtCurrency(rateValue, 3)}/kWh` },
+                { label: "Days of Operation / Week", value: `${data?.daysPerWeek ?? AppState.daysPerWeek}` }
+            ]);
+            drawScopeHighlights(Array.isArray(data?.itemDetails) ? data.itemDetails : [], { showPricing: false });
+            addFooter();
+            const safeName = projectName.replace(/[^a-z0-9]+/gi, "_").replace(/^_+|_+$/g, "") || "LeanAmp_Proposal";
+            doc.save(`${safeName}.pdf`);
+        }
+        
+        // ====== UI & ZIP / API INTEGRATION ======
+        async function reverseGeocodeLatLng(lat, lon) {
+            try {
+                const url = `https://maps.googleapis.com/maps/api/geocode/json?latlng=${lat},${lon}&key=${GOOGLE_KEY}`;
+                const res = await fetch(url);
+                const data = await res.json();
+                if (!data.results || !data.results.length) return { address: '', state: '' };
+                const result = data.results[0];
+                const components = result.address_components || [];
+                const stateComponent = components.find(c => c.types.includes("administrative_area_level_1"));
+                const state = stateComponent ? (stateComponent.short_name || stateComponent.long_name || '').toUpperCase() : '';
+                return { address: result.formatted_address || '', state };
+            } catch (err) {
+                console.warn("Reverse geocode failed:", err);
+                return { address: '', state: '' };
+            }
+        }
+
+        async function handleLookup(presetCoords = null) {
+            const inputField = document.getElementById("zipOrAddress");
+            const input = presetCoords ? "" : (inputField.value.trim());
+            const statusEl = document.getElementById("lookupStatus");
+            const errorEl = document.getElementById("lookupError");
+            const detectedEl = document.getElementById("detectedLocation");
+            
+            console.log('🔍 Manual lookup triggered for:', input);
+            
+            if (!input && !presetCoords) {
+                errorEl.textContent = "Please enter a ZIP code or address.";
+                errorEl.style.display = "block";
+                return;
+            }
+            
+            errorEl.style.display = "none";
+            statusEl.innerHTML = `<strong>⏳ Working...</strong> Fetching location, utility rate, and climate data.`;
+            
+            let lat, lon, state = "", fullAddress = "";
+            
+            try {
+                const isZip = /^\d{5}$/.test(input);
+                console.log(`📋 Input type: ${isZip ? 'ZIP code' : 'Address'}`);
+                
+                if (presetCoords) {
+                    ({ lat, lon } = presetCoords);
+                    const rev = await reverseGeocodeLatLng(lat, lon);
+                    state = rev.state || "";
+                    fullAddress = rev.address || "Current Location";
+                } else if (isZip) {
+                    // Use Zippopotam for ZIP codes
+                    console.log('🔎 Looking up ZIP via Zippopotam...');
+                    const res = await fetch(`https://api.zippopotam.us/us/${input}`);
+                    
+                    if (!res.ok) {
+                        console.error(`❌ Zippopotam error: ${res.status}`);
+                        throw new Error(`ZIP lookup failed (${res.status}). Please check the ZIP code.`);
+                    }
+                    
+                    const data = await res.json();
+                    console.log('✅ Zippopotam response:', data);
+                    
+                    if (!data.places || !data.places.length) {
+                        throw new Error("Invalid ZIP code.");
+                    }
+                    
+                    lat = parseFloat(data.places[0].latitude);
+                    lon = parseFloat(data.places[0].longitude);
+                    state = data.places[0]["state abbreviation"].toUpperCase();
+                    fullAddress = `${data.places[0]["place name"]}, ${state} ${input}`;
+                    
+                    console.log(`✅ ZIP resolved: ${fullAddress} (${lat}, ${lon})`);
+                    
+                } else {
+                    // Use Google Geocoding API for full addresses
+                    console.log('🗺️ Geocoding address via Google...');
+                    const encoded = encodeURIComponent(input);
+                    const url = `https://maps.googleapis.com/maps/api/geocode/json?address=${encoded}&key=${GOOGLE_KEY}`;
+                    const res = await fetch(url);
+                    const data = await res.json();
+                    
+                    console.log('📍 Geocoding response status:', data.status);
+                    
+                    if (data.status === "REQUEST_DENIED") {
+                        console.error('❌ Google API key issue:', data.error_message);
+                        throw new Error("API key error. Please contact support.");
+                    }
+                    if (data.status === "ZERO_RESULTS") {
+                        throw new Error("Address not found. Please check spelling or try a different format.");
+                    }
+                    if (data.status === "INVALID_REQUEST") {
+                        throw new Error("Invalid address format. Try entering just the ZIP code.");
+                    }
+                    if (!data.results || !data.results.length) {
+                        throw new Error("No results found for this address.");
+                    }
+                    
+                    const result = data.results[0];
+                    const loc = result.geometry.location;
+                    lat = loc.lat;
+                    lon = loc.lng;
+                    fullAddress = result.formatted_address;
+                    
+                    const components = result.address_components || [];
+                    const stateComponent = components.find(c => c.types.includes("administrative_area_level_1"));
+                    state = stateComponent ? (stateComponent.short_name || stateComponent.long_name || "").toUpperCase() : "";
+                    
+                    console.log(`✅ Address geocoded: ${fullAddress} (${lat}, ${lon})`);
+                }
+                
+                // Auto-fill customer address field if blank
+                const addrInput = document.getElementById("customerAddress");
+                if (addrInput) {
+                    addrInput.value = fullAddress || `${state} ${input}`;
+                    console.log('✅ Customer address auto-filled');
+                }
+                
+                if (inputField && fullAddress) {
+                    inputField.value = fullAddress;
+                }
+                detectedEl.textContent = `${state} - ${fullAddress || input}`;
+                AppState.lastLookupInput = fullAddress || input;
+                
+                // Fetch rate and weather
+                console.log('⚡ Fetching utility rate and climate data...');
+                await fetchRateAndWeather(lat, lon, state);
+                
+                statusEl.innerHTML = `<strong>✅ Success!</strong> Rate: $${AppState.rate.toFixed(3)}/kWh, CDD: ${AppState.cdd}, HDD: ${AppState.hdd}`;
+                console.log('✅ Lookup complete!');
+                
+            } catch (err) {
+                console.error('❌ Lookup error:', err);
+                errorEl.textContent = err.message || "Lookup failed. You can still set rate and CDD/HDD manually.";
+                errorEl.style.display = "block";
+                statusEl.innerHTML = `<strong>Using defaults:</strong> Rate $${CONSTANTS.DEFAULT_RATE}/kWh, CDD ${CONSTANTS.DEFAULT_CDD}, HDD ${CONSTANTS.DEFAULT_HDD}`;
+            }
+        }
+        
+        // ====== MAIN CALCULATION / PROPOSAL ======
+        function generateProposal() {
+            const equipment = EquipmentManager.getAllEquipment();
+            const resultsDiv = document.getElementById("results");
+            const ctaDiv = document.getElementById("cta");
+            resultsDiv.style.display = "block";
+            ctaDiv.style.display = "block";
+            
+            if (!equipment.length) {
+                resultsDiv.textContent = "Please add at least one piece of equipment to calculate savings.";
+                ctaDiv.innerHTML = "";
+                return;
+            }
+            
+            const rate = AppState.rate;
+            const cdd = AppState.cdd;
+            const hdd = AppState.hdd;
+            const daysPerWeek = AppState.daysPerWeek;
+            
+            let baselineKwh = 0;
+            let itemLines = [];
+            let itemDetails = [];
+            const scopedItems = [];
+            
+            equipment.forEach(item => {
+                const qty = item.qty;
+                let kwhPerUnit = 0;
+                
+                if (item.type === "ac") {
+                    const tons = item.size;
+                    const seer = item.eff;
+                    kwhPerUnit = EnergyCalculator.calculateACEnergy(tons, seer, item.hours, daysPerWeek, cdd, item.isHeatPump, hdd);
+                } else {
+                    const hp = item.size;
+                    const eff = item.eff;
+                    kwhPerUnit = EnergyCalculator.calculateMotorEnergy(hp, eff, item.hours, daysPerWeek);
+                }
+                
+                const kwhTotal = kwhPerUnit * qty;
+                baselineKwh += kwhTotal;
+                
+                const isAc = item.type === "ac";
+                const sizeValue = Number(item.size) || 0;
+                const seerValue = isAc ? (Number(item.eff) || null) : null;
+                const typeLabel = {
+                    ac: "AC System",
+                    motor: "Motor",
+                    pump: "Pump",
+                    fan: "Fan"
+                }[item.type] || item.type.toUpperCase();
+                const scopeLabel = `${qty} × ${typeLabel}`;
+                scopedItems.push({
+                    label: scopeLabel,
+                    tons: isAc ? sizeValue : null,
+                    hp: !isAc ? sizeValue : null,
+                    seer: seerValue,
+                    baselineKwh: kwhTotal
+                });
+            });
+            
+            // Savings assumption fixed at 20% per requirements
+            const savingsPct = CONSTANTS.BASE_SAVINGS_PCT;
+            const savedKwhPerYear = baselineKwh * savingsPct;
+            const annualDollarSavings = savedKwhPerYear * rate;
+            const monthlySavings = annualDollarSavings / 12;
+            const tenYearSavings = annualDollarSavings * 10;
+            const propertyValueLift = annualDollarSavings > 0 ? annualDollarSavings / CONSTANTS.COMMERCIAL_CAP_RATE : null;
+            const scenarioInsights = SAVINGS_SCENARIOS.map(pct => {
+                const scenarioAnnualSavings = baselineKwh * pct * rate;
+                return {
+                    pct,
+                    annual: scenarioAnnualSavings,
+                    monthly: scenarioAnnualSavings / 12,
+                    tenYear: scenarioAnnualSavings * 10,
+                    propertyValue: scenarioAnnualSavings / CONSTANTS.COMMERCIAL_CAP_RATE
+                };
+            });
+            const createSpinSpan = (value, formatKey = "number0", fallbackLabel = "—") => {
+                const format = formatKey || "number0";
+                const formatter = NUMBER_FORMATTERS[format] || NUMBER_FORMATTERS.number0;
+                const isValid = typeof value === "number" && isFinite(value);
+                const displayText = isValid ? formatter(value) : fallbackLabel;
+                const attrs = ["class=\"spin-number\"", `data-format="${formatKey}"`];
+                if (isValid) {
+                    attrs.push(`data-value="${value}"`);
+                } else {
+                    attrs.push(`data-fallback="${escapeHTML(fallbackLabel)}"`);
+                }
+                return `<span ${attrs.join(' ')}>${escapeHTML(displayText)}</span>`;
+            };
+            const envImpact = EnergyCalculator.calculateEnvironmental(savedKwhPerYear);
+            const savedPerMonth = savedKwhPerYear / 12;
+            const waitCostDaily = annualDollarSavings / 365;
+            const waitCostWeekly = annualDollarSavings / 52;
+            const savingsShare = baselineKwh > 0 ? savedKwhPerYear / baselineKwh : savingsPct;
+            
+            const formatSpecValue = (val) => {
+                if (typeof val !== "number" || !isFinite(val)) return null;
+                return Number(val).toLocaleString(undefined, { maximumFractionDigits: 2, minimumFractionDigits: 0 });
+            };
+            const detailedItems = scopedItems.map(item => {
+                const tonsValue = formatSpecValue(item.tons);
+                const hpValue = formatSpecValue(item.hp);
+                const seerValue = formatSpecValue(item.seer);
+                const sizeLabel = tonsValue !== null
+                    ? `${tonsValue} Tons`
+                    : `${hpValue ?? "0"} HP`;
+                const seerLabel = tonsValue !== null
+                    ? (seerValue ? `SEER ${seerValue}` : "SEER N/A")
+                    : "—";
+                const seerDisplay = tonsValue !== null
+                    ? (seerValue ?? "N/A")
+                    : "—";
+                const kwhLabel = `~${Math.round(item.baselineKwh).toLocaleString()} kWh/yr`;
+                const summarySpec = tonsValue !== null
+                    ? `${tonsValue} Tons${seerValue ? ` | SEER ${seerValue}` : ""}`
+                    : `${hpValue ?? "0"} HP`;
+                const annualLineSavings = item.baselineKwh * savingsPct * rate;
+                const savingsSharePct = baselineKwh > 0 ? (item.baselineKwh / baselineKwh) : 0;
+                return {
+                    label: item.label,
+                    sizeLabel,
+                    seerLabel,
+                    kwhLabel,
+                    summarySpec,
+                    tonsDisplay: tonsValue ?? "—",
+                    hpDisplay: hpValue ?? "—",
+                    seerDisplay,
+                    annualSavings: annualLineSavings,
+                    savingsShare: savingsSharePct,
+                    savingsLabel: formatCurrency(annualLineSavings, 0),
+                    savingsShareLabel: savingsSharePct ? formatPercentDisplay(savingsSharePct, 1) : "—"
+                };
+            });
+            itemLines = detailedItems.map(detail => {
+                const parts = [`• ${detail.label}`];
+                if (detail.summarySpec && detail.summarySpec !== "—") {
+                    parts.push(`Specs: ${detail.summarySpec}`);
+                } else if (detail.sizeLabel) {
+                    parts.push(`Specs: ${detail.sizeLabel}`);
+                }
+                if (detail.kwhLabel && detail.kwhLabel !== "—") {
+                    parts.push(`Baseline ${detail.kwhLabel}`);
+                }
+                if (typeof detail.annualSavings === "number" && isFinite(detail.annualSavings)) {
+                    const shareText = detail.savingsShareLabel && detail.savingsShareLabel !== "—"
+                        ? ` (${detail.savingsShareLabel} of savings)`
+                        : "";
+                    parts.push(`Savings: ~$${detail.annualSavings.toFixed(0)}/yr${shareText}`);
+                }
+                return parts.join(" | ");
+            });
+            itemDetails = detailedItems;
+            
+            const projectName = document.getElementById("projectName").value || "Optimization Project";
+            const customerName = document.getElementById("customerName").value || "Customer";
+            const address = document.getElementById("customerAddress").value || "";
+            const contact = document.getElementById("customerContact").value || "";
+            
+            let txt = "";
+            txt += `Project: ${projectName}\n`;
+            txt += `Customer: ${customerName}\n`;
+            if (address) txt += `Facility: ${address}\n`;
+            if (contact) txt += `Contact: ${contact}\n`;
+            txt += `\n--- Baseline Load (Before Optimization) ---\n`;
+            txt += itemLines.join("\n") + "\n";
+            txt += `\nEstimated Baseline Energy Use: ~${baselineKwh.toFixed(0)} kWh/year\n`;
+            txt += `Input Rate: $${rate.toFixed(3)}/kWh, Days/Week: ${daysPerWeek}\n`;
+            txt += `Climate: CDD ${cdd}, HDD ${hdd}\n`;
+            txt += `\n--- LeanAmp Optimization Impact ---\n`;
+            txt += `Assumed Savings: ${(savingsPct * 100).toFixed(1)}% of baseline energy use\n`;
+            txt += `Energy Saved: ~${savedKwhPerYear.toFixed(0)} kWh/year\n`;
+            txt += `Annual Utility Savings: ~$${annualDollarSavings.toFixed(0)}/year\n`;
+            txt += `\n--- Savings Outlook ---\n`;
+            txt += `Monthly Savings: ~$${monthlySavings.toFixed(0)}/month\n`;
+            txt += `10-Year Savings (flat rates): ~$${tenYearSavings.toFixed(0)}\n`;
+            if (propertyValueLift) {
+                txt += `Property Value Lift (6% cap): ~$${propertyValueLift.toFixed(0)}\n`;
+            }
+            txt += `Cost of Waiting: ~$${waitCostDaily.toFixed(0)}/day (~$${waitCostWeekly.toFixed(0)}/week) in unrealized savings\n`;
+            txt += `\n--- Environmental Impact (Annual) ---\n`;
+            txt += `CO₂ Avoided: ~${envImpact.co2.toFixed(2)} metric tons/year\n`;
+            txt += `Tree Equivalent: ~${envImpact.trees.toFixed(0)} trees/year\n`;
+            txt += `Car Equivalent: ~${envImpact.cars.toFixed(2)} passenger vehicles removed from the road\n`;
+            txt += `\n--- Next Steps ---\n`;
+            txt += `This proposal is based on live location data (rate & degree days) plus your equipment scope.\n`;
+            txt += `Adjust quantities, sizes, hours, or rate/climate sliders to refine the model as needed.\n`;
+            
+            const headerPieces = [];
+            if (customerName) headerPieces.push(`Customer: ${customerName}`);
+            if (address) headerPieces.push(address);
+            headerPieces.push(`Rate: $${rate.toFixed(3)}/kWh`);
+            const headerSubline = headerPieces.length ? headerPieces.map(escapeHTML).join(" • ") : "";
+            const buildCard = (label, valueHtml, sub = "") => `
+                <div>
+                    <p class="eyebrow">${escapeHTML(label)}</p>
+                    <div class="metric-value">${valueHtml}</div>
+                    ${sub ? `<p class="metric-subtext">${sub}</p>` : ""}
+                </div>`;
+            const metricsHtml = [
+                buildCard("Annual Utility Savings", createSpinSpan(annualDollarSavings, "currency0"), savedKwhPerYear ? `≈ ${formatNumber(savedKwhPerYear, 0)} kWh @ ${formatPercentDisplay(savingsPct)}` : ""),
+                buildCard("Monthly Savings", createSpinSpan(monthlySavings, "currency0"), "Cash freed immediately"),
+                buildCard("10-Year Savings", createSpinSpan(tenYearSavings, "currency0"), "Flat utility rate modeling"),
+                buildCard("Avg Daily Savings", createSpinSpan(waitCostDaily, "currency0"), `${formatCurrency(waitCostWeekly, 0)}/week`),
+                buildCard("Energy Saved", createSpinSpan(savedKwhPerYear, "number0"), `${formatPercentDisplay(savingsPct)} baseline reduction`),
+                buildCard("Property Value Lift (6% cap)", propertyValueLift ? createSpinSpan(propertyValueLift, "currency0") : createSpinSpan(null, "currency0", "$—"), "Income approach valuation")
+            ].join("");
+            
+            const financialBullets = [];
+            if (annualDollarSavings > 0) {
+                financialBullets.push(`Annual utility savings of <strong>${formatCurrency(annualDollarSavings, 0)}</strong> (~${formatNumber(savedKwhPerYear, 0)} kWh).`);
+                financialBullets.push(`Monthly budget relief of <strong>${formatCurrency(monthlySavings, 0)}</strong> hits immediately.`);
+                financialBullets.push(`10-year cumulative savings ≈ <strong>${formatCurrency(tenYearSavings, 0)}</strong> (no utility escalation).`);
+            }
+            financialBullets.push(`Waiting costs ~<strong>${formatCurrency(waitCostDaily, 0)}/day</strong> (${formatCurrency(waitCostWeekly, 0)}/week) in unrealized value.`);
+            if (propertyValueLift) {
+                financialBullets.push(`Property value lift ≈ <strong>${formatCurrency(propertyValueLift, 0)}</strong> at a 6% cap rate.`);
+            }
+            const operationalStats = [
+                { label: "Baseline Load", value: baselineKwh, format: "number0", prefix: "~", suffix: " kWh/yr" },
+                { label: "Energy Saved", value: savedKwhPerYear, format: "number0", prefix: "~", suffix: " kWh/yr" },
+                { label: "Savings %", value: savingsPct, format: "percent1" },
+                { label: "Utility Rate", value: rate, format: "currency3", suffix: "/kWh" },
+                { label: "Days / Week", value: daysPerWeek, format: "number0" },
+                { label: "CDD / HDD", customHtml: `${createSpinSpan(cdd, "number0")} / ${createSpinSpan(hdd, "number0")}` }
+            ];
+            const renderStatValue = (stat) => {
+                if (stat.customHtml) return stat.customHtml;
+                if (typeof stat.value === "number" && isFinite(stat.value)) {
+                    const prefix = stat.prefix || "";
+                    const suffix = stat.suffix || "";
+                    return `${prefix}${createSpinSpan(stat.value, stat.format || "number0")}${suffix}`;
+                }
+                if (stat.fallbackHtml) return stat.fallbackHtml;
+                return escapeHTML(stat.fallback || "—");
+            };
+            const envBullets = [
+                `Cut ${formatNumber(envImpact.co2, 2)} metric tons of CO₂ annually.`,
+                `Equivalent to planting ${formatNumber(envImpact.trees, 0)} trees every year.`,
+                `Vehicles removed: <strong>${formatNumber(envImpact.cars, 2)}</strong> passenger cars/year.`,
+                `Grid relief: ${savedKwhPerYear ? `${formatNumber(savedKwhPerYear, 0)} kWh/yr` : "N/A"} no longer consumed.`
+            ];
+            const resultsHTML = `
+                <div class="results-header">
+                    <div>
+                        <p class="eyebrow">Sales Intelligence Hub</p>
+                        <h3>${escapeHTML(projectName)}</h3>
+                        ${headerSubline ? `<p>${headerSubline}</p>` : ""}
+                    </div>
+                    <div class="confidence-chip">
+                        <i class="fas fa-bolt"></i> ${escapeHTML(`${Math.round(savingsPct * 100)}% Savings Model`)}
+                    </div>
+                </div>
+                <div class="metrics-grid">
+                    ${metricsHtml}
+                </div>
+                <div class="scenario-grid">
+                    ${scenarioInsights.map(s => `
+                        <div class="scenario-card">
+                            <div class="scenario-eyebrow">${Math.round(s.pct * 100)}% savings</div>
+                            <div class="scenario-value">${createSpinSpan(s.annual, "currency0")} /yr</div>
+                            <div class="scenario-sub">Monthly savings ${createSpinSpan(s.monthly, "currency0")}</div>
+                            <div class="scenario-roi">10-Year impact ${createSpinSpan(s.tenYear, "currency0")}</div>
+                            <div class="scenario-sub">Property lift @6% cap ${createSpinSpan(s.propertyValue, "currency0")}</div>
+                        </div>
+                    `).join("")}
+                </div>
+                <div class="wait-cost-card">
+                    <h4><i class="fas fa-hourglass-half"></i> Cost of Waiting</h4>
+                    <p>Every day without action costs the client real dollars in unlocked savings.</p>
+                    <div class="mini-grid">
+                        <div class="mini-stat">
+                            <span>Daily</span>
+                            <strong>${createSpinSpan(waitCostDaily, "currency0")}</strong>
+                        </div>
+                        <div class="mini-stat">
+                            <span>Weekly</span>
+                            <strong>${createSpinSpan(waitCostWeekly, "currency0")}</strong>
+                        </div>
+                        <div class="mini-stat">
+                            <span>Monthly</span>
+                            <strong>${createSpinSpan(monthlySavings, "currency0")}</strong>
+                        </div>
+                    </div>
+                </div>
+                <div class="insight-panels">
+                    <div class="insight-card">
+                        <h4>Financial Ammo</h4>
+                        <ul class="insight-list">
+                            ${(financialBullets.length ? financialBullets : ["Scope ready for quoting once savings validated."]).map(item => `<li>${item}</li>`).join("")}
+                        </ul>
+                        <div class="badge-pill"><i class="fas fa-bolt"></i> ${savedPerMonth && isFinite(savedPerMonth) ? `${formatNumber(savedPerMonth, 0)} kWh/mo saved` : "Live data ready"}</div>
+                    </div>
+                    <div class="insight-card">
+                        <h4>Operational Intelligence</h4>
+                        <div class="mini-grid">
+                            ${operationalStats.map(stat => `
+                                <div class="mini-stat">
+                                    <span>${escapeHTML(stat.label)}</span>
+                                    <strong>${renderStatValue(stat)}</strong>
+                                </div>
+                            `).join("")}
+                        </div>
+                    </div>
+                    <div class="insight-card">
+                        <h4>ESG / Storytelling</h4>
+                        <ul class="insight-list">
+                            ${envBullets.map(item => `<li>${item}</li>`).join("")}
+                        </ul>
+                        <div class="badge-pill"><i class="fas fa-leaf"></i> Load Reduction ${escapeHTML(formatPercentDisplay(savingsShare, 1))}</div>
+                    </div>
+                </div>
+            `;
+            resultsDiv.innerHTML = resultsHTML;
+            spinNumbers(resultsDiv);
+            AppState.lastProposalText = txt;
+            AppState.lastProposalMeta = { projectName, customerName, address, contact };
+            AppState.lastProposalData = {
+                projectName,
+                customerName,
+                address,
+                contact,
+                rate,
+                cdd,
+                hdd,
+                daysPerWeek,
+                baselineKwh,
+                savingsPct,
+                savedKwhPerYear,
+                annualDollarSavings,
+                monthlySavings,
+                tenYearSavings,
+                propertyValueLift,
+                waitCostDaily,
+                waitCostWeekly,
+                envImpact,
+                itemLines,
+                itemDetails,
+                scenarioInsights,
+                format: document.getElementById("reportFormat")?.value || "summary"
+            };
+            
+            ctaDiv.innerHTML = `
+                <p><strong>Ready to move forward?</strong></p>
+                <button onclick="alert('In production, this would open your CRM or lead capture flow.')">
+                    Schedule Site Visit / Audit
+                </button>
+                <button onclick="exportProposalAsPDF()">
+                    Export Proposal as PDF
+                </button>
+            `;
+        }
+
+        // ====== INIT UI LISTENERS ======
+        document.addEventListener("DOMContentLoaded", () => {
+            console.log('📄 DOM Content Loaded');
+            
+            // Try to init autocomplete immediately if Google Maps is already loaded
+            initAutocomplete();
+            
+            // Also try again shortly after in case it wasn't ready yet
+            setTimeout(() => {
+                if (!autocompleteInstance) {
+                    console.log('🔄 Retrying autocomplete initialization...');
+                    initAutocomplete();
+                }
+            }, 1000);
+            
+            // Sliders
+            const rateSlider = document.getElementById("rateSlider");
+            const rateDisplay = document.getElementById("rateDisplay");
+            rateSlider.addEventListener("input", () => {
+                const manualRate = parseFloat(rateSlider.value) || CONSTANTS.DEFAULT_RATE;
+                updateRateDisplays(manualRate);
+            });
+            
+            const daysSlider = document.getElementById("daysSlider");
+            const daysDisplay = document.getElementById("daysDisplay");
+            daysSlider.addEventListener("input", () => {
+                AppState.daysPerWeek = parseInt(daysSlider.value) || CONSTANTS.DEFAULT_DAYS_PER_WEEK;
+                daysDisplay.textContent = AppState.daysPerWeek;
+            });
+            
+            const cddSlider = document.getElementById("cddSlider");
+            const cddDisplay = document.getElementById("cddDisplay");
+            cddSlider.addEventListener("input", () => {
+                AppState.cdd = parseInt(cddSlider.value) || CONSTANTS.DEFAULT_CDD;
+                cddDisplay.textContent = AppState.cdd;
+            });
+            
+            const hddSlider = document.getElementById("hddSlider");
+            const hddDisplay = document.getElementById("hddDisplay");
+            hddSlider.addEventListener("input", () => {
+                AppState.hdd = parseInt(hddSlider.value) || CONSTANTS.DEFAULT_HDD;
+                hddDisplay.textContent = AppState.hdd;
+            });
+            
+            const indoorSlider = document.getElementById("indoorTempSlider");
+            const indoorDisplay = document.getElementById("indoorTempDisplay");
+            indoorSlider.addEventListener("input", () => {
+                AppState.indoorTemp = parseInt(indoorSlider.value) || CONSTANTS.DEFAULT_INDOOR_TEMP;
+                indoorDisplay.textContent = AppState.indoorTemp;
+            });
+            
+            // Customer type dropdown
+            document.getElementById("rateType").addEventListener("change", (e) => {
+                AppState.customerType = e.target.value;
+            });
+            
+            // Advanced toggle
+            const advToggle = document.getElementById("advancedToggle");
+            advToggle.addEventListener("change", () => {
+                document.getElementById("cddGroup").classList.toggle("hidden", !advToggle.checked);
+                document.getElementById("hddGroup").classList.toggle("hidden", !advToggle.checked);
+                document.getElementById("indoorTempGroup").classList.toggle("hidden", !advToggle.checked);
+            });
+            
+            // Location lookup
+            document.getElementById("lookupBtn").addEventListener("click", () => handleLookup());
+            const myLocationBtn = document.getElementById("myLocationBtn");
+            if (myLocationBtn && navigator.geolocation) {
+                myLocationBtn.addEventListener("click", () => {
+                    const statusEl = document.getElementById("lookupStatus");
+                    const errorEl = document.getElementById("lookupError");
+                    if (errorEl) errorEl.style.display = "none";
+                    if (statusEl) statusEl.innerHTML = `<strong>📍 Locating...</strong> Please allow location access.`;
+                    navigator.geolocation.getCurrentPosition(
+                        position => {
+                            const { latitude, longitude } = position.coords;
+                            handleLookup({ lat: latitude, lon: longitude });
+                        },
+                        err => {
+                            console.error("❌ Geolocation error:", err);
+                            if (statusEl) statusEl.innerHTML = `<strong>Error:</strong> ${err.message || "Unable to get current location."}`;
+                        },
+                        { enableHighAccuracy: true, timeout: 10000 }
+                    );
+                });
+            }
+            document.getElementById("zipOrAddress").addEventListener("keydown", (e) => {
+                if (e.key === "Enter") {
+                    e.preventDefault();
+                    handleLookup();
+                }
+            });
+            
+            const calcContainer = document.querySelector('.container');
+            if (calcContainer) {
+                const autoHandler = (event) => {
+                    if (event.target.closest('#cta')) return;
+                    scheduleAutoGenerate();
+                };
+                calcContainer.addEventListener("input", autoHandler, true);
+                calcContainer.addEventListener("change", autoHandler, true);
+            }
+
+            // Initialize defaults in UI
+            updateRateDisplays(CONSTANTS.DEFAULT_RATE);
+            daysDisplay.textContent = CONSTANTS.DEFAULT_DAYS_PER_WEEK;
+            cddDisplay.textContent = CONSTANTS.DEFAULT_CDD;
+            hddDisplay.textContent = CONSTANTS.DEFAULT_HDD;
+            indoorDisplay.textContent = CONSTANTS.DEFAULT_INDOOR_TEMP;
+        });
+    </script>
+    <script src="../assets/site.js"></script>
+</body>
+</html>

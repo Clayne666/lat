@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Contact LeanAmp</title>
+    <meta name="description" content="Schedule a free energy audit or request a tailored proposal from LeanAmp.">
+    <link rel="icon" href="https://leanamp.com/Image%20(17).jpg" type="image/jpeg">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="../theme/site-theme.css">
+    <style>
+        .contact-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 1.5rem;
+        }
+        .contact-form label {
+            font-weight: 600;
+            font-size: 0.85rem;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            color: var(--text-light);
+        }
+        .contact-form input,
+        .contact-form textarea,
+        .contact-form select {
+            width: 100%;
+            padding: 0.75rem;
+            margin-bottom: 1rem;
+            border-radius: 12px;
+            border: 1px solid #dfe7ef;
+            font-family: 'Inter', sans-serif;
+        }
+        .contact-form textarea { min-height: 140px; }
+    </style>
+</head>
+<body>
+                        <nav>
+        <a href="Index.html">Home</a>
+        <a href="SolutionsPage.html">Solutions</a>
+        <a href="MarketsPage.html">Markets</a>
+        <a href="CaseStudy.html">Case Study</a>
+        <a href="ContactPage.html">Contact</a>
+        <a href="login.html" class="nav-auth-link" data-auth-href="../protected/calcandquote.html" data-auth-label="Quote Calculator">Login</a>
+        <a href="calcomwopdf.html">Savings Calculator</a>
+        <button class="action-btn ghost nav-logout" type="button" data-login="login.html">
+            <i class="fas fa-sign-out-alt"></i> Logout
+        </button>
+    </nav>
+
+
+
+
+
+
+    <section class="calc-section">
+        <div style="max-width:1200px;margin:0 auto;width:100%;display:flex;flex-direction:column;align-items:center;z-index:1">
+            <a class="logo" href="Index.html" aria-label="LeanAmp Home">
+                <img src="../assets/logo.png?v=1" alt="LeanAmp Logo" style="width:100%;height:100%;object-fit:contain;border-radius:50%;">
+            </a>
+            <h2 style="font-size:2.25rem;margin-bottom:1.5rem;animation:fadeInUp 0.8s ease-out;width:100%;color:var(--white);text-shadow:0 2px 4px rgba(0,0,0,0.3)">
+                Book Your Free Energy Audit
+            </h2>
+            <p style="font-size:1.25rem;margin-bottom:2rem;animation:fadeInUp 0.8s ease-out 0.2s both;width:100%;max-width:800px;color:var(--white);text-shadow:0 1px 2px rgba(0,0,0,0.3)">
+                Our engineering team will review your facility, rates, and runtime data to deliver a guaranteed savings plan.
+            </p>
+            <div class="hero-actions">
+                <a class="action-btn" href="mailto:sales@leanamp.com">Email sales@leanamp.com</a>
+                <a class="action-btn ghost" href="tel:+18005551234">Call +1 (800) 555-1234</a>
+            </div>
+        </div>
+    </section>
+
+    <section class="content-section">
+        <div class="floating-shell">
+        <div class="content-container">
+            <div class="contact-grid">
+                <div class="content-card">
+                    <h3><i class="fas fa-map-marker-alt"></i> HQ & Operations</h3>
+                    <p>LeanAmp Technologies, Inc.<br>Operating across US & Canada</p>
+                    <p><strong>Email:</strong> <a href="mailto:sales@leanamp.com">sales@leanamp.com</a></p>
+                    <p><strong>Phone:</strong> +1 (800) 555-1234</p>
+                    <p><strong>Support:</strong> support@leanamp.com</p>
+                    <p><strong>Office Hours:</strong> 7am–7pm PT | Remote ops 24/7</p>
+                </div>
+                <div class="content-card contact-form">
+                    <h3><i class="fas fa-envelope"></i> Send a Message</h3>
+                    <form id="contactForm" autocomplete="on">
+                        <label for="name">Name</label>
+                        <input id="name" name="name" type="text" placeholder="Your Name" required>
+                        <label for="company">Company</label>
+                        <input id="company" name="company" type="text" placeholder="Company / Facility">
+                        <label for="email">Email</label>
+                        <input id="email" name="email" type="email" placeholder="email@company.com" required>
+                        <label for="topic">Topic</label>
+                        <select id="topic" name="topic" required>
+                            <option value="" disabled selected>Select a topic</option>
+                            <option>Book an energy audit</option>
+                            <option>Request proposal support</option>
+                            <option>Partnership inquiry</option>
+                            <option>General question</option>
+                        </select>
+                        <label for="message">Message</label>
+                        <textarea id="message" name="message" placeholder="Tell us about your project" required></textarea>
+                        <button class="action-btn" type="submit">Submit</button>
+                        <div id="contactStatus" class="status-message" aria-live="polite"></div>
+                    </form>
+                </div>
+            </div>
+            <div class="cta-panel" style="margin-top:2rem;">
+                <p class="eyebrow">Self-Serve Tools</p>
+                <h2>Need numbers right now?</h2>
+                <div class="hero-actions" style="justify-content:center;">
+                    <a class="action-btn" href="calcomwopdf.html">Savings Calculator</a>
+                    <a class="action-btn ghost" href="calcomwopdf.html">Savings Calculator</a>
+                </div>
+            </div>
+        </div>
+        </div>
+    </section>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const form = document.getElementById('contactForm');
+            const statusBox = document.getElementById('contactStatus');
+            if (!form) return;
+
+            form.addEventListener('submit', async (event) => {
+                event.preventDefault();
+
+                const formData = new FormData(form);
+                const payload = {
+                    name: formData.get('name')?.trim(),
+                    company: formData.get('company')?.trim(),
+                    email: formData.get('email')?.trim(),
+                    topic: formData.get('topic') || 'General inquiry',
+                    message: formData.get('message')?.trim()
+                };
+
+                if (!payload.name || !payload.email || !payload.message) {
+                    if (statusBox) {
+                        statusBox.textContent = 'Please complete the required fields before submitting.';
+                        statusBox.style.color = '#c00';
+                    }
+                    return;
+                }
+
+                if (statusBox) {
+                    statusBox.textContent = 'Submitting...';
+                    statusBox.style.color = 'var(--primary-green)';
+                }
+
+                try {
+                    const response = await fetch('/api/contact', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(payload)
+                    });
+                    if (!response.ok) {
+                        throw new Error(`Request failed (${response.status})`);
+                    }
+                    form.reset();
+                    const topicField = document.getElementById('topic');
+                    if (topicField) topicField.selectedIndex = 0;
+                    if (statusBox) {
+                        statusBox.textContent = 'Thanks! Your request has been received.';
+                        statusBox.style.color = 'var(--primary-green)';
+                    }
+                } catch (err) {
+                    console.error(err);
+                    if (statusBox) {
+                        statusBox.textContent = 'Something went wrong. Please email sales@leanamp.com.';
+                        statusBox.style.color = '#c00';
+                    }
+                }
+            });
+        });
+    </script>
+
+    <footer>
+        <p>© 2025 LeanAmp Technologies, Inc.</p>
+    </footer>
+    <script src="../assets/site.js"></script>
+</body>
+</html>
